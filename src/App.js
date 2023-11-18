@@ -39,13 +39,8 @@ function App() {
 
   /** Login an existing user and update token */
   async function login(userData) {
-    try {
-      await InviApi.login(userData);
-      setToken(InviApi.token);
-      localStorage.setItem('token', JSON.stringify(InviApi.token));
-    } catch (err) {
-      alert(err);
-    }
+    let token = await InviApi.login(userData);
+    setToken(token);
   }
 
   /** Logout user, update token to empty string */
