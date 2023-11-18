@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import './LoginForm.css';
+import Alert from '../common/Alert';
 import HomepageNavbar from '../Homepage/HomepageNavbar';
+import './LoginForm.css';
 
 function LoginForm({ login }) {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
   });
+
+  const [formErrors, setFormErrors] = useState([]);
 
   function handleChange(evt) {
     const { name, value } = evt.target;
@@ -17,10 +20,14 @@ function LoginForm({ login }) {
     }));
   }
 
-  function handleSubmit(evt) {
+  async function handleSubmit(evt) {
     evt.preventDefault();
-    console.log(formData);
-    login(formData);
+    try {
+      await login(formData);
+    } catch (err) {
+      console.log(err);
+      setFormErrors(err);
+    }
   }
 
   return (
@@ -28,20 +35,21 @@ function LoginForm({ login }) {
       <HomepageNavbar />
       <div className="login-container-wrapper">
         <div className="two-column-layout">
-          {/* Left column with introductory text */}
           <div className="intro-text">
             <h2>Simplify Invoicing with Invi's Smart Management</h2>
             <p>
-              Ensure accurate inventory tracking with real-time updates
-              based on invoice status, minimizing risks of overselling or
-              stockouts.
+              Ensure accurate inventory tracking with real-time updates based on invoice status, minimizing risks of overselling or stockouts.
             </p>
           </div>
 
-          {/* Right column with login form */}
           <div className="login-container">
             <h2 className="login-heading">Login</h2>
             <form className="login-form" onSubmit={handleSubmit}>
+
+              {formErrors.length > 0 && (
+                <Alert messages={formErrors} />
+              )}
+
               <div className="input-group">
                 <label htmlFor="username" className="label">
                   Username:
@@ -57,6 +65,7 @@ function LoginForm({ login }) {
                   required
                 />
               </div>
+
               <div className="input-group">
                 <label htmlFor="password" className="label">
                   Password:
@@ -72,12 +81,13 @@ function LoginForm({ login }) {
                   required
                 />
               </div>
+
               <button type="submit" className="login-button">
                 Login
               </button>
+
               <p className="register-text">
-                Don't have an account yet?
-                <NavLink className="register-link" to="/signup"> Sign up now.</NavLink>
+                Don't have an account yet? <NavLink className="register-link" to="/signup"> Sign up now.</NavLink>
               </p>
             </form>
           </div>
