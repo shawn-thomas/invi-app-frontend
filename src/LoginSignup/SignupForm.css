@@ -21,6 +21,11 @@
   position: relative;
 }
 
+.signup-heading {
+  display: flex;
+  justify-content: center;
+}
+
 .signup-button {
   background-color: #1479fb;
   color: #fff;
