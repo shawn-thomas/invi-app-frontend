@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './SignupForm.css';
 import HomepageNavbar from '../Homepage/HomepageNavbar';
 import { NavLink } from 'react-router-dom';
+import Alert from '../common/Alert';
 
 function SignupForm({ signUp }) {
   const [formData, setFormData] = useState({
@@ -12,6 +13,8 @@ function SignupForm({ signUp }) {
     email: '',
   });
 
+  const [formErrors, setFormErrors] = useState([]);
+
   function handleChange(evt) {
     const { name, value } = evt.target;
     setFormData((prevFormData) => ({
@@ -20,9 +23,21 @@ function SignupForm({ signUp }) {
     }));
   }
 
-  function handleSubmit(evt) {
+  async function handleSubmit(evt) {
     evt.preventDefault();
-    signUp(formData);
+    try {
+      await signUp(formData);
+    } catch (err) {
+      setFormErrors(err);
+    }
+  }
+  async function handleSubmit(evt) {
+    evt.preventDefault();
+    try {
+      await signUp(formData);
+    } catch (err) {
+      setFormErrors(err);
+    }
   }
 
   return (
@@ -32,6 +47,10 @@ function SignupForm({ signUp }) {
         <div className="signup-container">
           <h2 className="signup-heading">Sign Up</h2>
           <form className="signup-form" onSubmit={handleSubmit}>
+            {formErrors.length > 0 && (
+              <Alert messages={formErrors} />
+            )}
+
             <div className="input-group">
               <label htmlFor="username" className="label">
                 Username:

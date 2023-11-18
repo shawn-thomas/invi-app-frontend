@@ -28,13 +28,9 @@ function App() {
   const [token, setToken] = useState("");
 
   /** Register a new user and update token */
-  async function signUp(newUserData) {
-    try {
-      await InviApi.register(newUserData);
-      setToken(InviApi.token);
-    } catch (err) {
-      alert(err);
-    }
+  async function signUp(signupData) {
+    let token = await InviApi.register(signupData);
+    setToken(token);
   }
 
   /** Login an existing user and update token */
