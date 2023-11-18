@@ -42,6 +42,10 @@
   background-color: #125ea6;
 }
 
+.login-text {
+  font-size: 0.85rem;
+}
+
 .login-link {
   text-decoration: none;
 }
