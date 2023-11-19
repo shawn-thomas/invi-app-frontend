@@ -8,12 +8,7 @@ const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:3002";
  */
 
 class InviApi {
-  // Remember, the backend needs to be authorized with a token
-  // We're providing a token you can use to interact with the backend API
-
-  // static token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZ" +
-  //   "SI6InRlc3R1c2VyIiwiaXNBZG1pbiI6ZmFsc2UsImlhdCI6MTU5ODE1OTI1OX0." +
-  //   "FtrMwBQwe6Ue-glIFgz_Nf8XxRT2YecFCiSpYL0fCXc";
+  // authorize backend with a token
   static token = "";
 
   static async request(endpoint, data = {}, method = "get") {
