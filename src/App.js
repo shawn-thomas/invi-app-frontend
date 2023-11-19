@@ -1,11 +1,16 @@
 // import './App.css';
 import { BrowserRouter } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import RoutesList from './RoutesList';
-import Homepage from './Homepage/Homepage';
-import InviApi from './api';
 import { jwtDecode } from "jwt-decode";
+
 import userContext from './userContext';
+import RoutesList from './RoutesList';
+import useLocalStorage from "./hooks/useLocalStorage";
+import Homepage from './components/LoggedOut/Homepage/Homepage'
+import InviApi from './api';
+
+// Key name for storing token in localStorage for "remember me" re-login
+const TOKEN_STORAGE_ID = "invi-token";
 
 /** App
  *
@@ -25,7 +30,7 @@ function App() {
     email: ""
   });
 
-  const [token, setToken] = useState("");
+  const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
 
   /** Register a new user and update token */
   async function signUp(signupData) {
