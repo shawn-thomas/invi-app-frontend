@@ -1,9 +1,14 @@
 import './styles/Dashboard.css'
-import SideNav from './styles/SideNav';
+import Sidebar from './Sidebar';
 
 function Dashboard() {
   return (
-    <p>Hello</p>
+    <div className="dashboard">
+      <Sidebar />
+      <div className="dashboard-container">
+        container
+      </div>
+    </div>
   )
 }
 
