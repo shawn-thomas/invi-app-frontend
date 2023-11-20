@@ -6,7 +6,7 @@ import CustomerList from "./CustomerList";
 import userContext from "../../userContext";
 import InviApi from "../../api";
 
-function Dashboard() {
+function Dashboard({ logout }) {
   const { username } = useContext(userContext);
   const [customers, setCustomers] = useState([]);
 
@@ -37,7 +37,7 @@ function Dashboard() {
 
   return (
     <div className="dashboard">
-      <Sidebar />
+      <Sidebar logout={logout} />
       <div className="dashboard-container">
         <Header />
         {/* home container */}

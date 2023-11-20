@@ -5,8 +5,17 @@ import QrCodeSharpIcon from '@mui/icons-material/QrCodeSharp';
 import RequestPageSharpIcon from '@mui/icons-material/RequestPageSharp';
 import InventorySharpIcon from '@mui/icons-material/InventorySharp';
 import LogoutSharpIcon from '@mui/icons-material/LogoutSharp';
+import { useNavigate } from "react-router-dom";
 
-function Sidebar() {
+function Sidebar({ logout }) {
+  const navigate = useNavigate();
+
+  function handleLogout(evt) {
+    evt.preventDefault();
+    logout();
+    navigate("/");
+  }
+
   return (
     <div className='sidebar'>
       <div className="sidebar-top">
@@ -45,7 +54,7 @@ function Sidebar() {
           <p className='sidebar-sub'>USER</p>
           <li>
             <LogoutSharpIcon className='sidebar-li-icon' />
-            <span>Logout</span>
+            <span onClick={handleLogout}>Logout</span>
           </li>
         </ul>
       </div>

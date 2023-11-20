@@ -16,7 +16,7 @@ import Dashboard from './components/LoggedIn/Dashboard';
  * App -> RoutesList -> { Homepage }
  */
 
-function RoutesList({ signUp, login, auth }) {
+function RoutesList({ signUp, login, logout, auth }) {
   if (!auth) {
     return (
       <Routes>
@@ -31,7 +31,7 @@ function RoutesList({ signUp, login, auth }) {
   else {
     return (
       <Routes>
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard logout={logout} />} />
       </Routes>
     );
   }

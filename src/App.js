@@ -85,7 +85,9 @@ function App() {
           <RoutesList
             signUp={signUp}
             login={login}
-            auth={token} />
+            logout={logout}
+            auth={token}
+            />
         </BrowserRouter>
       </userContext.Provider>
     </div>
