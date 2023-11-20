@@ -64,10 +64,25 @@ hr {
     margin-left: 10px;
 }
 
+.sidebar-bottom {
+    display: flex;
+    align-items: center;
+    margin: 10px;
+}
+
 .sidebar-color-opt {
     width: 20px;
     height: 20px;
     border-radius: 5px;
     border: 1px solid #7451f8;
     cursor: pointer;
+    margin-left: 10px;
+}
+
+.sidebar-color-opt:nth-child(1) {
+    background-color: whitesmoke;
+}
+
+.sidebar-color-opt:nth-child(2) {
+    background-color: #333;
 }

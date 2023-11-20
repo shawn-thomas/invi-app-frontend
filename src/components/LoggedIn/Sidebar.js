@@ -50,7 +50,6 @@ function Sidebar() {
       <div className="sidebar-bottom">
         <div className="sidebar-color-opt"></div>
         <div className="sidebar-color-opt"></div>
-        <div className="sidebar-color-opt"></div>
       </div>
     </div>
   )
