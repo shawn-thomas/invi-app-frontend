@@ -73,6 +73,19 @@ class InviApi {
     return user;
   }
 
+
+  /** Accepts a username and retrieves all customers for specified user.
+   *
+   * Returns
+   * [{ customerName, firstName, lastName, email, phone, address }, ...]
+   */
+
+  static async getCustomers() {
+    let res = await this.request(`customer/`);
+
+    return res
+  }
+
 }
 
 export default InviApi;
