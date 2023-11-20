@@ -5,3 +5,15 @@
 .dashboard-container{
     flex: 6
 }
+
+.dashboard-list {
+    box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+    padding: 20px;
+    margin: 20px;
+}
+
+.dashboard-list-title {
+    font-weight: 500;
+    color: gray;
+    margin-bottom: 15px;
+}
