@@ -9,17 +9,29 @@
     height: 50px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
+    border-bottom: 0.5px solid rgb(231, 228, 228);
 }
 
 .sidebar-logo {
-    font-size: 20px;
+    display: flex;
+    align-items: center;
     font-weight: bold;
     color: black;
 }
 
+.sidebar-logo h2 {
+    font-size: 25px;
+}
+
+.sidebar-logo-icon {
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+}
+
 hr {
-    height: 0;
+    /* height: 0; */
     border: 0.5px solid rgb(230, 227, 227);
 }
 
@@ -86,3 +98,4 @@ hr {
 .sidebar-color-opt:nth-child(2) {
     background-color: #333;
 }
+

@@ -11,10 +11,12 @@ function Sidebar() {
     <div className='sidebar'>
       <div className="sidebar-top">
         <span className="sidebar-logo">
-          Invi
+          <img src="https://images.ctfassets.net/spoqsaf9291f/3352a7f0-cb1a-49ba-b5d1-26df3b522fa2/3652cfd770ca15516defe196a357a6c4/3352a7f0-cb1a-49ba-b5d1-26df3b522fa2.png" alt="SendOwl"
+          className='sidebar-logo-icon'/>
+          <h2>Invi</h2>
         </span>
       </div>
-      <hr />
+      {/* <hr /> */}
       <div className="sidebar-center">
         <ul>
           <p className='sidebar-sub'>MAIN</p>
