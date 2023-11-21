@@ -86,6 +86,15 @@ class InviApi {
     return res
   }
 
+
+  static async createCustomer({ customerName, firstName, lastName, email, phone, address }) {
+    const data = { customerName, firstName, lastName, email, phone, address};
+    let res = await this.request("customer/", data, "post");
+
+
+    return res;
+  }
+
 }
 
 export default InviApi;

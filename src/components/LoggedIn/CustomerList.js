@@ -8,12 +8,15 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import TablePagination from '@mui/material/TablePagination';
+import Button from '@mui/material/Button';
+import AddCustomerModal from './AddCustomerModal';
 import './styles/CustomerList.css';
 
 function CustomerList({ listData }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [isAddModalOpen, setAddModalOpen] = useState(false);
 
   /**
    * Accepts a string input (phoneNumber) and adds formatting.
@@ -57,6 +60,7 @@ function CustomerList({ listData }) {
     return formattedRow;
   });
 
+
   /** Handle change for current page. */
   const handleChangePage = (evt, newPage) => {
     setPage(newPage);
@@ -68,14 +72,31 @@ function CustomerList({ listData }) {
     setPage(0);
   };
 
+  const handleAddModalOpen = () => {
+    setAddModalOpen(true);
+  };
+
+  const handleAddModalClose = () => {
+    setAddModalOpen(false);
+  };
+
+
   return (
     <>
+      <div className="dashboard-header">
+        <div className="dashboard-title"><h2>Customers</h2></div>
+        <div className="dashboard-create-btn">
+          <Button variant="contained" color="primary" sx={{ marginBottom: 2 }} onClick={handleAddModalOpen}>
+            Add new
+          </Button>
+        </div>
+      </div>
       <TextField
         label="Search"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         className="db-table-search"
-        sx={ { marginBottom: 2 } }
+        sx={{ marginBottom: 2 }}
       />
       <TableContainer component={Paper} className="dashboard-table">
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -113,6 +134,7 @@ function CustomerList({ listData }) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </TableContainer>
+      <AddCustomerModal isOpen={isAddModalOpen} onClose={handleAddModalClose} />
     </>
   );
 
