@@ -75,6 +75,7 @@ function CustomerList({ listData }) {
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         className="db-table-search"
+        sx={ { marginBottom: 2 } }
       />
       <TableContainer component={Paper} className="dashboard-table">
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
