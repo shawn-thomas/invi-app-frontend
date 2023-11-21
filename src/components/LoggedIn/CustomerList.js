@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './styles/CustomerList.css';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,8 +7,13 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import TextField from '@mui/material/TextField';
+import TablePagination from '@mui/material/TablePagination';
 
 function CustomerList({ listData }) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   /**
    * Accepts a string input (phoneNumber) and adds formatting.
@@ -25,41 +30,92 @@ function CustomerList({ listData }) {
     return phoneNumber;
   };
 
-  const rows = listData.map((row, idx) => ({
-    customer: row.customerName,
-    name: `${row.firstName} ${row.lastName}`,
-    email: row.email,
-    phone: formatPhoneNumber(row.phone),
-    address: row.address,
-    id: idx
-  }));
+  // Filter list based on the search query
+  const filteredRows = listData.filter((row) => {
+    // Check if any value in the curr row contains the search query
+    const rowContainsQuery = Object.values(row).some((value) => {
+
+      if (typeof (value) === "string") {
+        return value.toLowerCase().includes(searchQuery.toLowerCase());
+      }
+      return false;
+    });
+
+    return rowContainsQuery;
+  });
+
+  const formattedRows = filteredRows.map((row, idx) => {
+    const formattedRow = {
+      customer: row.customerName,
+      name: `${row.firstName} ${row.lastName}`,
+      email: row.email,
+      phone: formatPhoneNumber(row.phone),
+      address: row.address,
+      id: idx,
+    };
+
+    return formattedRow;
+  });
+
+  /** Handle change for current page. */
+  const handleChangePage = (evt, newPage) => {
+    setPage(newPage);
+  };
+
+  /** Handle change of number of rows per page. */
+  const handleChangeRowsPerPage = (evt) => {
+    setRowsPerPage(parseInt(evt.target.value, 10));
+    setPage(0);
+  };
 
   return (
-    <TableContainer component={Paper} className="dashboard-table">
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell className="db-table-cell">Customer</TableCell>
-            <TableCell className="db-table-cell">Name</TableCell>
-            <TableCell className="db-table-cell">Email</TableCell>
-            <TableCell className="db-table-cell">Phone</TableCell>
-            <TableCell className="db-table-cell">Address</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell className="db-table-cell">{row.customer}</TableCell>
-              <TableCell className="db-table-cell">{row.name}</TableCell>
-              <TableCell className="db-table-cell">{row.email}</TableCell>
-              <TableCell className="db-table-cell">{row.phone}</TableCell>
-              <TableCell className="db-table-cell">{row.address}</TableCell>
+    <>
+      <TextField
+        label="Search"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="db-table-search"
+      />
+      <TableContainer component={Paper} className="dashboard-table">
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell className="db-table-cell">Customer</TableCell>
+              <TableCell className="db-table-cell">Name</TableCell>
+              <TableCell className="db-table-cell">Email</TableCell>
+              <TableCell className="db-table-cell">Phone</TableCell>
+              <TableCell className="db-table-cell">Address</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {(rowsPerPage > 0
+              ? formattedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              : formattedRows
+            ).map((row) => (
+              <TableRow key={row.id}>
+                <TableCell className="db-table-cell">{row.customer}</TableCell>
+                <TableCell className="db-table-cell">{row.name}</TableCell>
+                <TableCell className="db-table-cell">{row.email}</TableCell>
+                <TableCell className="db-table-cell">{row.phone}</TableCell>
+                <TableCell className="db-table-cell">{row.address}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 50]}
+          component="div"
+          count={formattedRows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </TableContainer>
+    </>
   );
+
+
 }
 
 export default CustomerList;
