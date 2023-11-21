@@ -9,7 +9,7 @@ import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import TablePagination from '@mui/material/TablePagination';
 import Button from '@mui/material/Button';
-import AddCustomerModal from './AddCustomerModal';
+import AddCustomer from './modals/AddCustomer';
 import './styles/CustomerList.css';
 
 function CustomerList({ listData }) {
@@ -134,7 +134,7 @@ function CustomerList({ listData }) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </TableContainer>
-      <AddCustomerModal isOpen={isAddModalOpen} onClose={handleAddModalClose} />
+      <AddCustomer isOpen={isAddModalOpen} onClose={handleAddModalClose} />
     </>
   );
 

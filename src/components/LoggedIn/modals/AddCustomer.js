@@ -1,4 +1,3 @@
-// AddCustomerModal.js
 import React, { useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -6,11 +5,11 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import InviApi from '../../api';
-import Alert from '../../common/Alert';
+import InviApi from '../../../api';
+import Alert from '../../../common/Alert';
 
 
-function AddCustomerModal({ isOpen, onClose }) {
+function AddCustomer({ isOpen, onClose }) {
   const [newCustomerData, setNewCustomerData] = useState({
     customerName: '',
     firstName: '',
@@ -169,4 +168,4 @@ function AddCustomerModal({ isOpen, onClose }) {
   );
 }
 
-export default AddCustomerModal;
+export default AddCustomer;
