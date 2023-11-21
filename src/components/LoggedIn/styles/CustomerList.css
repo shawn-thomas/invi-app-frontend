@@ -2,3 +2,7 @@
   width: 44%;
   margin-bottom: 20px;
 }
+
+.db-table-head {
+    font-weight: 700;
+}

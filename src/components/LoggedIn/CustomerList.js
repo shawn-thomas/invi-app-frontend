@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './styles/CustomerList.css';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -9,6 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import TablePagination from '@mui/material/TablePagination';
+import './styles/CustomerList.css';
 
 function CustomerList({ listData }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -79,13 +79,13 @@ function CustomerList({ listData }) {
       />
       <TableContainer component={Paper} className="dashboard-table">
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
+          <TableHead >
             <TableRow>
-              <TableCell className="db-table-cell">Customer</TableCell>
-              <TableCell className="db-table-cell">Name</TableCell>
-              <TableCell className="db-table-cell">Email</TableCell>
-              <TableCell className="db-table-cell">Phone</TableCell>
-              <TableCell className="db-table-cell">Address</TableCell>
+              <TableCell className="db-table-head">Customer</TableCell>
+              <TableCell className="db-table-head">Name</TableCell>
+              <TableCell className="db-table-head">Email</TableCell>
+              <TableCell className="db-table-head">Phone</TableCell>
+              <TableCell className="db-table-head">Address</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
