@@ -43,7 +43,7 @@ function Dashboard({ logout }) {
         {/* home container */}
         <div className="dashboard-list">
           <div className="dashboard-list-title">
-            Customers
+            {/* Customers */}
           </div>
           <CustomerList listData={customers}/>
         </div>
