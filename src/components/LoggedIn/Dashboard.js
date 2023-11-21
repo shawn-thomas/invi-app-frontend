@@ -32,7 +32,7 @@ function Dashboard({ logout }) {
     }
 
     fetchCustomers();
-  }, [username]);
+  }, [username, customers]);
 
 
   return (
