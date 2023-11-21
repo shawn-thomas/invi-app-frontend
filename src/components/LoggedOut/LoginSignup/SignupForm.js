@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import './SignupForm.css';
 import HomepageNavbar from '../Homepage/HomepageNavbar';
 import { NavLink } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import Alert from '../../../common/Alert';
 
 function SignupForm({ signUp }) {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -27,14 +29,7 @@ function SignupForm({ signUp }) {
     evt.preventDefault();
     try {
       await signUp(formData);
-    } catch (err) {
-      setFormErrors(err);
-    }
-  }
-  async function handleSubmit(evt) {
-    evt.preventDefault();
-    try {
-      await signUp(formData);
+      navigate("/dashboard");
     } catch (err) {
       setFormErrors(err);
     }
