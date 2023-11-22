@@ -10,11 +10,14 @@ import TextField from '@mui/material/TextField';
 import TablePagination from '@mui/material/TablePagination';
 import Button from '@mui/material/Button';
 import AddCustomer from './modals/AddCustomer';
+import DeleteCustomer from './modals/DeleteCustomer';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import * as XLSX from 'xlsx';
+import InviApi from '../../api';
+import formatPhoneNumber from '../../common/formatPhoneNumber';
 import './styles/CustomerList.css';
 
 function CustomerList({ listData }) {
@@ -22,21 +25,8 @@ function CustomerList({ listData }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isAddModalOpen, setAddModalOpen] = useState(false);
-
-  /**
-   * Accepts a string input (phoneNumber) and adds formatting.
-   *
-   * ex. 6043323311 => (604) 332-3311
-   */
-
-  function formatPhoneNumber(phoneNumber) {
-    const cleaned = ('' + phoneNumber).replace(/\D/g, '');
-    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
-    if (match) {
-      return `(${match[1]}) ${match[2]}-${match[3]}`;
-    }
-    return phoneNumber;
-  };
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedCustomerHandle, setSelectedCustomerHandle] = useState(null);
 
   // Filter list based on the search query
   const filteredRows = listData.filter((row) => {
@@ -58,6 +48,7 @@ function CustomerList({ listData }) {
     email: row.email,
     phone: formatPhoneNumber(row.phone),
     address: row.address,
+    handle: row.handle
   }));
 
 
@@ -89,6 +80,25 @@ function CustomerList({ listData }) {
     XLSX.utils.book_append_sheet(wb, ws, 'Customers');
     XLSX.writeFile(wb, 'customers.xlsx');
   };
+
+  /** */
+  async function handleConfirmDelete() {
+    await InviApi.removeCustomer(selectedCustomerHandle);
+    setDeleteModalOpen(false);
+  }
+
+  /** */
+  function handleDeleteCustomer(handle) {
+    setSelectedCustomerHandle(handle);
+    setDeleteModalOpen(true);
+  }
+
+  /** */
+  async function handleCancelDelete() {
+    setSelectedCustomerHandle(null);
+    setDeleteModalOpen(false);
+  }
+
 
   return (
     <>
@@ -143,11 +153,13 @@ function CustomerList({ listData }) {
                 <TableCell className="db-table-cell">{row.phone}</TableCell>
                 <TableCell className="db-table-cell">{row.address}</TableCell>
                 <TableCell className="db-table-cell">
-                  <EditIcon style={{ cursor: 'pointer', marginRight: '5px' }} />
-                  <DeleteIcon style={{ cursor: 'pointer'}} />
+                  <EditOutlinedIcon
+                    style={{ cursor: 'pointer',
+                    marginRight: '5px' }} />
+                  <DeleteOutlinedIcon
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => handleDeleteCustomer(row.handle)} />
                 </TableCell>
-
-
               </TableRow>
             ))}
           </TableBody>
@@ -162,7 +174,14 @@ function CustomerList({ listData }) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </TableContainer>
-      <AddCustomer isOpen={isAddModalOpen} onClose={handleAddModalClose} />
+      <AddCustomer
+        isOpen={isAddModalOpen}
+        onClose={handleAddModalClose} />
+      <DeleteCustomer
+        isOpen={isDeleteModalOpen}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+      />
       <div className="dashboard-export-btn">
       </div>
     </>

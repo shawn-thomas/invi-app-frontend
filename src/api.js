@@ -86,6 +86,13 @@ class InviApi {
     return res
   }
 
+  /** Create a customer (from data)
+   *
+   * data should be { customerName, firstName, lastName, email, phone, address }
+   *
+   * Returns { customerName, handle, firstName, lastName, email, phone, address }
+  */
+
 
   static async createCustomer({ customerName, firstName, lastName, email, phone, address }) {
     const data = { customerName, firstName, lastName, email, phone, address};
@@ -94,6 +101,15 @@ class InviApi {
 
     return res;
   }
+
+  /**
+   *
+   */
+
+  static async removeCustomer(handle) {
+    await this.request(`customer/${handle}`, {}, "delete");
+  }
+
 
 }
 
