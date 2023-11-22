@@ -157,11 +157,11 @@ function AddCustomer({ isOpen, onClose }) {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="secondary">
-          Cancel
-        </Button>
-        <Button onClick={handleAddCustomer} color="primary">
+        <Button onClick={handleAddCustomer} variant="outlined" color="primary">
           Add Customer
+        </Button>
+        <Button onClick={handleClose} color="error">
+          Cancel
         </Button>
       </DialogActions>
     </Dialog>
