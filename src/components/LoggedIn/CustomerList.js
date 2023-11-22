@@ -10,6 +10,9 @@ import TextField from '@mui/material/TextField';
 import TablePagination from '@mui/material/TablePagination';
 import Button from '@mui/material/Button';
 import AddCustomer from './modals/AddCustomer';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import AddIcon from '@mui/icons-material/Add';
+import * as XLSX from 'xlsx';
 import './styles/CustomerList.css';
 
 function CustomerList({ listData }) {
@@ -47,47 +50,63 @@ function CustomerList({ listData }) {
     return rowContainsQuery;
   });
 
-  const formattedRows = filteredRows.map((row, idx) => {
-    const formattedRow = {
-      customer: row.customerName,
-      name: `${row.firstName} ${row.lastName}`,
-      email: row.email,
-      phone: formatPhoneNumber(row.phone),
-      address: row.address,
-      id: idx,
-    };
-
-    return formattedRow;
-  });
+  const formattedRows = filteredRows.map((row) => ({
+    customer: row.customerName,
+    name: `${row.firstName} ${row.lastName}`,
+    email: row.email,
+    phone: formatPhoneNumber(row.phone),
+    address: row.address,
+  }));
 
 
   /** Handle change for current page. */
-  const handleChangePage = (evt, newPage) => {
+  function handleChangePage(evt, newPage) {
     setPage(newPage);
-  };
+  }
 
   /** Handle change of number of rows per page. */
-  const handleChangeRowsPerPage = (evt) => {
+  function handleChangeRowsPerPage(evt) {
     setRowsPerPage(parseInt(evt.target.value, 10));
     setPage(0);
-  };
+  }
 
-  const handleAddModalOpen = () => {
+
+  /** Handle model visibility. */
+  function handleAddModalOpen() {
     setAddModalOpen(true);
   };
 
-  const handleAddModalClose = () => {
+  /** Handle model visibility. */
+  function handleAddModalClose() {
     setAddModalOpen(false);
   };
 
+  function handleExportToExcel() {
+    const ws = XLSX.utils.json_to_sheet(formattedRows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Customers');
+    XLSX.writeFile(wb, 'customers.xlsx');
+  };
 
   return (
     <>
       <div className="dashboard-header">
         <div className="dashboard-title"><h2>Customers</h2></div>
         <div className="dashboard-create-btn">
-          <Button variant="contained" color="primary" sx={{ marginBottom: 2 }} onClick={handleAddModalOpen}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            sx={{ marginBottom: 2 }}
+            onClick={handleAddModalOpen}>
             Add new
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<FileDownloadIcon />}
+            sx={{ marginBottom: 2, marginLeft: 2 }}
+            onClick={handleExportToExcel}>
+            Export
           </Button>
         </div>
       </div>
@@ -135,6 +154,8 @@ function CustomerList({ listData }) {
         />
       </TableContainer>
       <AddCustomer isOpen={isAddModalOpen} onClose={handleAddModalClose} />
+      <div className="dashboard-export-btn">
+      </div>
     </>
   );
 
@@ -142,4 +163,3 @@ function CustomerList({ listData }) {
 }
 
 export default CustomerList;
-
