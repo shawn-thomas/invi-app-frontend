@@ -103,13 +103,28 @@ class InviApi {
   }
 
   /**
-   *
+   * Send a delete request to remove the customer that matches the specified
+   * handle (string).
    */
 
   static async removeCustomer(handle) {
     await this.request(`customer/${handle}`, {}, "delete");
   }
 
+  /**
+   * Send a patch request to the API to update the customer that matches the
+   * specified handle (string). Accepts a handle, and data object containing
+   * the fields to be updated.
+   *
+   * data can be { customerName, firstName, lastName, email, phone, address }
+   *
+   * Returns { customerName, handle, firstName, lastName, email, phone, address }
+   */
+
+  static async updateCustomer(handle, data) {
+      const res = await this.request(`customer/${handle}`, data, "patch");
+      return res.customer;
+  }
 
 }
 
