@@ -12,6 +12,8 @@ import Button from '@mui/material/Button';
 import AddCustomer from './modals/AddCustomer';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import * as XLSX from 'xlsx';
 import './styles/CustomerList.css';
 
@@ -126,6 +128,7 @@ function CustomerList({ listData }) {
               <TableCell className="db-table-head">Email</TableCell>
               <TableCell className="db-table-head">Phone</TableCell>
               <TableCell className="db-table-head">Address</TableCell>
+              <TableCell className="db-table-head">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -139,6 +142,12 @@ function CustomerList({ listData }) {
                 <TableCell className="db-table-cell">{row.email}</TableCell>
                 <TableCell className="db-table-cell">{row.phone}</TableCell>
                 <TableCell className="db-table-cell">{row.address}</TableCell>
+                <TableCell className="db-table-cell">
+                  <EditIcon style={{ cursor: 'pointer', marginRight: '5px' }} />
+                  <DeleteIcon style={{ cursor: 'pointer'}} />
+                </TableCell>
+
+
               </TableRow>
             ))}
           </TableBody>
