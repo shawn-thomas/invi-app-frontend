@@ -9,7 +9,7 @@ import InviApi from '../../../api';
 import Alert from '../../../common/Alert';
 
 
-function AddCustomer({ isOpen, onClose }) {
+function AddCustomer({ isOpen, onClose, onFetchCustomer }) {
   const [newCustomerData, setNewCustomerData] = useState({
     customerName: '',
     firstName: '',
@@ -21,8 +21,9 @@ function AddCustomer({ isOpen, onClose }) {
 
   const [validationErrors, setValidationErrors] = useState({});
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  /** Handles input changes and updates the new customer data. */
+  function handleInputChange(evt) {
+    const { name, value } = evt.target;
     setNewCustomerData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -32,9 +33,10 @@ function AddCustomer({ isOpen, onClose }) {
       ...prevErrors,
       [name]: '',
     }));
-  };
+  }
 
-  const validateForm = () => {
+  /** Validates the form and displays errors. */
+  function validateForm() {
     const errors = {};
 
     if (!newCustomerData.customerName) {
@@ -50,18 +52,14 @@ function AddCustomer({ isOpen, onClose }) {
     setValidationErrors(errors);
 
     return Object.keys(errors).length === 0;
-  };
+  }
 
-  const handleAddCustomer = async () => {
+  /** Handles the addition of a new customer. */
+  async function handleAddCustomer() {
     try {
       if (!validateForm()) {
         return;
       }
-
-      const res = await InviApi.createCustomer(newCustomerData);
-
-      console.log('Response from createCustomer:', res);
-
       setNewCustomerData({
         customerName: '',
         firstName: '',
@@ -70,14 +68,17 @@ function AddCustomer({ isOpen, onClose }) {
         phone: '',
         address: '',
       });
-
+      onFetchCustomer();
       onClose();
+
     } catch (error) {
       console.error('Error adding customer:', error.message);
     }
   };
 
-  const handleClose = () => {
+
+  /** Closes the dialog and resets the form. */
+  function handleClose() {
     setNewCustomerData({
       customerName: '',
       firstName: '',
