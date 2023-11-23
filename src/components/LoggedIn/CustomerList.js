@@ -11,6 +11,7 @@ import TablePagination from '@mui/material/TablePagination';
 import Button from '@mui/material/Button';
 import AddCustomer from './modals/AddCustomer';
 import DeleteCustomer from './modals/DeleteCustomer';
+import EditCustomer from './modals/EditCustomer';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import AddIcon from '@mui/icons-material/Add';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -20,13 +21,16 @@ import InviApi from '../../api';
 import formatPhoneNumber from '../../common/formatPhoneNumber';
 import './styles/CustomerList.css';
 
-function CustomerList({ listData }) {
+function CustomerList({ listData, onFetchCustomers }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedCustomerHandle, setSelectedCustomerHandle] = useState(null);
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [selectedCustomerData, setSelectedCustomerData] = useState(null);
+  const [updatedCustomerData, setUpdatedCustomerData] = useState(null);
 
   // Filter list based on the search query
   const filteredRows = listData.filter((row) => {
@@ -51,6 +55,7 @@ function CustomerList({ listData }) {
     handle: row.handle
   }));
 
+  /** Pagination ------------------------------------------------------------ */
 
   /** Handle change for current page. */
   function handleChangePage(evt, newPage) {
@@ -63,42 +68,68 @@ function CustomerList({ listData }) {
     setPage(0);
   }
 
+  /** Add Customer. ----------------------------------------------------------*/
 
-  /** Handle model visibility. */
   function handleAddModalOpen() {
     setAddModalOpen(true);
   };
 
-  /** Handle model visibility. */
   function handleAddModalClose() {
     setAddModalOpen(false);
   };
 
+
+  /** Customer Delete --------------------------------------------------------*/
+
+  function handleDeleteModalOpen(handle) {
+    setSelectedCustomerHandle(handle);
+    setDeleteModalOpen(true);
+  }
+
+  async function handleDeleteModalCancel() {
+    setSelectedCustomerHandle(null);
+    setDeleteModalOpen(false);
+  }
+
+  async function handleDeleteCustomer() {
+    await InviApi.removeCustomer(selectedCustomerHandle);
+    onFetchCustomers();
+    setDeleteModalOpen(false);
+  }
+
+  /** Customer Edit ----------------------------------------------------------*/
+
+  function handleEditModalOpen(customerData) {
+    const fNameLName = customerData.name.split(' ');
+    customerData['firstName'] = fNameLName[0];
+    customerData['lastName'] = fNameLName[1];
+    setSelectedCustomerData(customerData);
+    setEditModalOpen(true);
+  }
+
+  function handleEditModalClose() {
+    setEditModalOpen(false);
+    setSelectedCustomerData(null);
+  }
+
+  async function handleUpdateCustomer(updatedData) {
+    const { firstName, lastName, email, phone, address, handle } = updatedData;
+    const updatedCustomer = { firstName, lastName, email, phone, address };
+
+    await InviApi.updateCustomer(handle, updatedCustomer);
+
+    setUpdatedCustomerData(updatedCustomer);
+    onFetchCustomers();
+    handleEditModalClose();
+  }
+
+  /** Excel export */
   function handleExportToExcel() {
     const ws = XLSX.utils.json_to_sheet(formattedRows);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Customers');
     XLSX.writeFile(wb, 'customers.xlsx');
   };
-
-  /** */
-  async function handleConfirmDelete() {
-    await InviApi.removeCustomer(selectedCustomerHandle);
-    setDeleteModalOpen(false);
-  }
-
-  /** */
-  function handleDeleteCustomer(handle) {
-    setSelectedCustomerHandle(handle);
-    setDeleteModalOpen(true);
-  }
-
-  /** */
-  async function handleCancelDelete() {
-    setSelectedCustomerHandle(null);
-    setDeleteModalOpen(false);
-  }
-
 
   return (
     <>
@@ -154,11 +185,15 @@ function CustomerList({ listData }) {
                 <TableCell className="db-table-cell">{row.address}</TableCell>
                 <TableCell className="db-table-cell">
                   <EditOutlinedIcon
-                    style={{ cursor: 'pointer',
-                    marginRight: '5px' }} />
+                    style={{
+                      cursor: 'pointer',
+                      marginRight: '5px'
+                    }}
+                    onClick={() => handleEditModalOpen(row)}
+                  />
                   <DeleteOutlinedIcon
                     style={{ cursor: 'pointer' }}
-                    onClick={() => handleDeleteCustomer(row.handle)} />
+                    onClick={() => handleDeleteModalOpen(row.handle)} />
                 </TableCell>
               </TableRow>
             ))}
@@ -176,11 +211,19 @@ function CustomerList({ listData }) {
       </TableContainer>
       <AddCustomer
         isOpen={isAddModalOpen}
-        onClose={handleAddModalClose} />
+        onClose={handleAddModalClose}
+        onFetchCustomer={onFetchCustomers}
+        />
       <DeleteCustomer
         isOpen={isDeleteModalOpen}
-        onClose={handleCancelDelete}
-        onConfirm={handleConfirmDelete}
+        onClose={handleDeleteModalCancel}
+        onConfirm={handleDeleteCustomer}
+      />
+      <EditCustomer
+        isOpen={isEditModalOpen}
+        onClose={handleEditModalClose}
+        onUpdate={handleUpdateCustomer}
+        initialData={selectedCustomerData}
       />
       <div className="dashboard-export-btn">
       </div>
