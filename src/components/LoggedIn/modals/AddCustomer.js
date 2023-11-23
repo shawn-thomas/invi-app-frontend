@@ -60,6 +60,9 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer }) {
       if (!validateForm()) {
         return;
       }
+
+      await InviApi.createCustomer(newCustomerData);
+      
       setNewCustomerData({
         customerName: '',
         firstName: '',
