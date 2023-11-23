@@ -9,6 +9,7 @@ import InviApi from "../../api";
 function Dashboard({ logout }) {
   const { username } = useContext(userContext);
   const [customers, setCustomers] = useState([]);
+  const [triggerFetch, setTriggerFetch] = useState(false);
 
 /** Fetch all customers data when the component mounts. This effect checks if
  * the `username` is defined before making an API call.
@@ -32,8 +33,15 @@ function Dashboard({ logout }) {
     }
 
     fetchCustomers();
-  }, [username]);
+  }, [username, triggerFetch]);
 
+  /**trigger a fetch when customers are added, removed, or edited
+   *
+   * If prev is true, it becomes false, and if prev is false, it becomes true.
+  */
+  const handleFetchCustomers = () => {
+    setTriggerFetch((prev) => !prev);
+  };
 
   return (
     <div className="dashboard">
@@ -45,7 +53,7 @@ function Dashboard({ logout }) {
           <div className="dashboard-list-title">
             {/* Customers */}
           </div>
-          <CustomerList listData={customers}/>
+          <CustomerList listData={customers} onFetchCustomers={handleFetchCustomers}/>
         </div>
       </div>
     </div>
