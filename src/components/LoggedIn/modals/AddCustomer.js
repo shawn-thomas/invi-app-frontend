@@ -20,6 +20,7 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer }) {
   });
 
   const [validationErrors, setValidationErrors] = useState({});
+  const [formErrors, setFormErrors] = useState([]);
 
   /** Handles input changes and updates the new customer data. */
   function handleInputChange(evt) {
@@ -62,7 +63,7 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer }) {
       }
 
       await InviApi.createCustomer(newCustomerData);
-      
+
       setNewCustomerData({
         customerName: '',
         firstName: '',
@@ -76,6 +77,7 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer }) {
 
     } catch (error) {
       console.error('Error adding customer:', error.message);
+      setFormErrors(error);
     }
   };
 
@@ -91,6 +93,7 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer }) {
       address: '',
     });
 
+    setFormErrors([]);
     onClose();
   };
 
@@ -98,6 +101,10 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer }) {
     <Dialog open={isOpen} onClose={handleClose}>
       <DialogTitle>Create New Customer</DialogTitle>
       <DialogContent>
+        {formErrors.length > 0 && (
+          <Alert messages={formErrors} />
+        )}
+
         <TextField
           label="Customer Name"
           name="customerName"
@@ -127,6 +134,7 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer }) {
           onChange={handleInputChange}
           fullWidth
           margin="normal"
+          required
         />
         <TextField
           label="Email"
@@ -148,6 +156,7 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer }) {
           margin="normal"
           error={Boolean(validationErrors.phone)}
           helperText={validationErrors.phone}
+          required
         />
         <TextField
           label="Address"
@@ -158,6 +167,7 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer }) {
           margin="normal"
           error={Boolean(validationErrors.address)}
           helperText={validationErrors.address}
+          required
         />
       </DialogContent>
       <DialogActions>
