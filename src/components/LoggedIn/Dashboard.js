@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from "react";
-import './styles/Dashboard.css'
+import './styles/Dashboard.css';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import CustomerList from "./CustomerList";
@@ -10,12 +10,13 @@ function Dashboard({ logout }) {
   const { username } = useContext(userContext);
   const [customers, setCustomers] = useState([]);
   const [triggerFetch, setTriggerFetch] = useState(false);
+  const [SidebarExpanded, setSidebarExpanded] = useState(false);
 
-/** Fetch all customers data when the component mounts. This effect checks if
- * the `username` is defined before making an API call.
- *
- * username - The username obtained from the user context.
- */
+  /** Fetch all customers data when the component mounts. This effect checks if
+   * the `username` is defined before making an API call.
+   *
+   * username - The username obtained from the user context.
+   */
 
   useEffect(function fetchCustomersWhenMounted() {
     async function fetchCustomers() {
@@ -47,17 +48,24 @@ function Dashboard({ logout }) {
     <div className="dashboard">
       <Sidebar logout={logout} />
       <div className="dashboard-container">
-        <Header />
+        {/* <Header /> */}
         {/* home container */}
-        <div className="dashboard-list">
-          <div className="dashboard-list-title">
-            {/* Customers */}
+        <div className={`dashboard-container ${SidebarExpanded
+          ? 'expanded'
+          : 'collapsed'}`}
+        >
+          <div className="sticky-sidebar">
+            <div className="dashboard-list">
+              <div className="dashboard-list-title">
+                {/* Customers */}
+              </div>
+              <CustomerList listData={customers} onFetchCustomers={handleFetchCustomers} />
+            </div>
           </div>
-          <CustomerList listData={customers} onFetchCustomers={handleFetchCustomers}/>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default Dashboard;
