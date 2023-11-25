@@ -6,8 +6,9 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import InviApi from '../../../api';
+import Alert from '../../../common/Alert';
 
-function EditCustomer({ isOpen, onClose, onUpdate, initialData }) {
+function EditCustomer({ isOpen, onClose, onUpdate, initialData, formErrors }) {
   const [editedData, setEditedData] = useState(initialData);
 
   // Handle changes in the input fields
@@ -24,6 +25,9 @@ function EditCustomer({ isOpen, onClose, onUpdate, initialData }) {
     <Dialog open={isOpen} onClose={onClose}>
       <DialogTitle>Edit Customer</DialogTitle>
       <DialogContent>
+        {formErrors.length > 0 && (
+          <Alert messages={formErrors} />
+        )}
         <TextField
           label="First Name"
           name="firstName"

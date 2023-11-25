@@ -31,6 +31,7 @@ function CustomerList({ listData, onFetchCustomers }) {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [selectedCustomerData, setSelectedCustomerData] = useState(null);
   const [updatedCustomerData, setUpdatedCustomerData] = useState(null);
+  const [formErrors, setFormErrors] = useState([]);
 
   // Filter list based on the search query
   const filteredRows = listData.filter((row) => {
@@ -105,22 +106,28 @@ function CustomerList({ listData, onFetchCustomers }) {
     customerData['lastName'] = fNameLName[1];
     setSelectedCustomerData(customerData);
     setEditModalOpen(true);
+    setFormErrors([]);
   }
 
   function handleEditModalClose() {
     setEditModalOpen(false);
     setSelectedCustomerData(null);
+    setFormErrors([]);
   }
 
   async function handleUpdateCustomer(updatedData) {
-    const { firstName, lastName, email, phone, address, handle } = updatedData;
-    const updatedCustomer = { firstName, lastName, email, phone, address };
+    try {
+      const { firstName, lastName, email, phone, address, handle } = updatedData;
+      const updatedCustomer = { firstName, lastName, email, phone, address };
 
-    await InviApi.updateCustomer(handle, updatedCustomer);
+      await InviApi.updateCustomer(handle, updatedCustomer);
 
-    setUpdatedCustomerData(updatedCustomer);
-    onFetchCustomers();
-    handleEditModalClose();
+      setUpdatedCustomerData(updatedCustomer);
+      onFetchCustomers();
+      handleEditModalClose();
+    } catch(error) {
+      setFormErrors(error);
+    }
   }
 
   /** Excel export */
@@ -224,6 +231,7 @@ function CustomerList({ listData, onFetchCustomers }) {
         onClose={handleEditModalClose}
         onUpdate={handleUpdateCustomer}
         initialData={selectedCustomerData}
+        formErrors={formErrors}
       />
       <div className="dashboard-export-btn">
       </div>
