@@ -72,6 +72,8 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer }) {
         phone: '',
         address: '',
       });
+      
+      setFormErrors([]);
       onFetchCustomer();
       onClose();
 
