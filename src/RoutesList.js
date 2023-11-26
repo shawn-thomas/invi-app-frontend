@@ -24,39 +24,8 @@ import useCustomers from './components/LoggedIn/useCustomers';
  */
 
 function RoutesList({ signUp, login, logout, auth }) {
-  // const [customers, setCustomers] = useState([]);
   const [triggerFetch, setTriggerFetch] = useState(false);
   const customers = useCustomers(auth, handleFetchCustomers)
-
-  /** Fetch all customers data when the component mounts. This effect checks if
-   * the `username` is defined before making an API call.
-   *
-   * username - The username obtained from the user context.
-   */
-
-  // useEffect(function fetchCustomersWhenMounted() {
-  //   async function fetchCustomers() {
-  //     if (auth) {
-  //       try {
-  //         const customersData = await InviApi.getCustomers();
-  //         console.log(customersData.customers);
-  //         setCustomers(customersData.customers);
-  //       } catch (err) {
-  //         console.warn(err);
-  //       }
-  //     } else {
-  //       setCustomers([]);
-  //     }
-  //   }
-
-  //   fetchCustomers();
-  // }, [auth, triggerFetch]);
-
-  /**
-   * Trigger a fetch when customers are added, removed, or edited.
-   *
-   * If prev is true, it becomes false, and if prev is false, it becomes true.
-  */
 
   function handleFetchCustomers() {
     setTriggerFetch((prev) => !prev);
