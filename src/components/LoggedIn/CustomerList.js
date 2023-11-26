@@ -33,21 +33,22 @@ function CustomerList({ listData, onFetchCustomers }) {
   const [updatedCustomerData, setUpdatedCustomerData] = useState(null);
   const [formErrors, setFormErrors] = useState([]);
 
-  console.log(typeof(onFetchCustomers));
-
   // Filter list based on the search query
-  const filteredRows = listData.filter((row) => {
-    // Check if any value in the curr row contains the search query
-    const rowContainsQuery = Object.values(row).some((value) => {
+  const filteredRows = listData && listData.length > 0
+    ? listData.filter((row) => {
+      // Check if any value in the curr row contains the search query
+      const rowContainsQuery = Object.values(row).some((value) => {
 
-      if (typeof (value) === "string") {
-        return value.toLowerCase().includes(searchQuery.toLowerCase());
-      }
-      return false;
-    });
+        if (typeof (value) === "string") {
+          return value.toLowerCase().includes(searchQuery.toLowerCase());
+        }
+        return false;
+      });
 
-    return rowContainsQuery;
-  });
+      return rowContainsQuery;
+    })
+    : [];
+
 
   const formattedRows = filteredRows.map((row) => ({
     customer: row.customerName,
@@ -71,7 +72,7 @@ function CustomerList({ listData, onFetchCustomers }) {
     setPage(0);
   }
 
-  /** Add Customer. ----------------------------------------------------------*/
+  /** Add Customer --------------------------------------------------------------*/
 
   function handleAddModalOpen() {
     setAddModalOpen(true);
@@ -127,7 +128,7 @@ function CustomerList({ listData, onFetchCustomers }) {
       setUpdatedCustomerData(updatedCustomer);
       onFetchCustomers();
       handleEditModalClose();
-    } catch(error) {
+    } catch (error) {
       setFormErrors(error);
     }
   }
@@ -222,7 +223,7 @@ function CustomerList({ listData, onFetchCustomers }) {
         isOpen={isAddModalOpen}
         onClose={handleAddModalClose}
         onFetchCustomer={onFetchCustomers}
-        />
+      />
       <DeleteCustomer
         isOpen={isDeleteModalOpen}
         onClose={handleDeleteModalCancel}
