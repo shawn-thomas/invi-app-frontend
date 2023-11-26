@@ -34,7 +34,7 @@ function CustomerList({ listData, onFetchCustomers }) {
   const [formErrors, setFormErrors] = useState([]);
 
   // Filter list based on the search query
-  const filteredRows = listData && listData.length > 0
+  const filteredRows = (Array.isArray(listData) && listData.length > 0)
     ? listData.filter((row) => {
       // Check if any value in the curr row contains the search query
       const rowContainsQuery = Object.values(row).some((value) => {
@@ -48,7 +48,6 @@ function CustomerList({ listData, onFetchCustomers }) {
       return rowContainsQuery;
     })
     : [];
-
 
   const formattedRows = filteredRows.map((row) => ({
     customer: row.customerName,
