@@ -41,7 +41,7 @@ function Sidebar({ logout }) {
           </li>
           <li>
             <PeopleSharpIcon className="sidebar-li-icon" />
-            {isExpanded && <span>Customers</span>}
+            {isExpanded && <span>Customer</span>}
           </li>
           <li>
             <QrCodeSharpIcon className="sidebar-li-icon" />
