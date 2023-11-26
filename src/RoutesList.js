@@ -7,9 +7,7 @@ import LoginForm from './components/LoggedOut/LoginSignup/LoginForm';
 import SignupForm from './components/LoggedOut/LoginSignup/SignupForm';
 import Dashboard from './components/LoggedIn/Dashboard';
 import { useState, useEffect, useContext } from "react";
-import useCustomers from './components/LoggedIn/useCustomers';
-
-
+import useCustomers from './hooks/useCustomers';
 
 
 /** Define routes.
