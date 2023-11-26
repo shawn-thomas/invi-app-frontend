@@ -6,8 +6,9 @@ import Homepage from './components/LoggedOut/Homepage/Homepage';
 import LoginForm from './components/LoggedOut/LoginSignup/LoginForm';
 import SignupForm from './components/LoggedOut/LoginSignup/SignupForm';
 import Dashboard from './components/LoggedIn/Dashboard';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import useCustomers from './components/LoggedIn/useCustomers';
+
 
 
 
@@ -24,8 +25,9 @@ import useCustomers from './components/LoggedIn/useCustomers';
  */
 
 function RoutesList({ signUp, login, logout, auth }) {
+  const { username } = useContext(userContext);
   const [triggerFetch, setTriggerFetch] = useState(false);
-  const customers = useCustomers(auth, handleFetchCustomers)
+  const customers = useCustomers(username, handleFetchCustomers)
 
   function handleFetchCustomers() {
     setTriggerFetch((prev) => !prev);
