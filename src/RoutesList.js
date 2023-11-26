@@ -24,12 +24,7 @@ import useCustomers from './hooks/useCustomers';
 
 function RoutesList({ signUp, login, logout, auth }) {
   const { username } = useContext(userContext);
-  const [triggerFetch, setTriggerFetch] = useState(false);
-  const customers = useCustomers(username, handleFetchCustomers)
-
-  function handleFetchCustomers() {
-    setTriggerFetch((prev) => !prev);
-  };
+  const { customers, handleFetchCustomers } = useCustomers(username);
 
   if (!auth) {
     return (
