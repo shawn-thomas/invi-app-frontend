@@ -29,7 +29,7 @@ function App() {
     email: ""
   });
 
-  const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID);
+  const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID, "");
   // const [token, setToken] = useState("");
 
   /** Register a new user and update token */
@@ -71,7 +71,7 @@ function App() {
       }
     }
     fetchUser();
-  }, [token]);
+  }, []);
 
   return (
     <div className="App">

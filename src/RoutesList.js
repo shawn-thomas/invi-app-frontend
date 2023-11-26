@@ -31,6 +31,7 @@ function RoutesList({ signUp, login, logout, auth }) {
   else {
     return (
       <Routes>
+        <Route path="*" element={<Navigate to="/dashboard" />} />
         <Route path="/dashboard" element={<Dashboard logout={logout} />} />
       </Routes>
     );
