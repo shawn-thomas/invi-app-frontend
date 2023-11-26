@@ -11,6 +11,7 @@ function Dashboard({ logout }) {
   const [customers, setCustomers] = useState([]);
   const [triggerFetch, setTriggerFetch] = useState(false);
   const [SidebarExpanded, setSidebarExpanded] = useState(false);
+  const [activeSidebarItem, setActiveSidebarItem] = useState('dashboard');
 
   /** Fetch all customers data when the component mounts. This effect checks if
    * the `username` is defined before making an API call.
@@ -40,26 +41,34 @@ function Dashboard({ logout }) {
    *
    * If prev is true, it becomes false, and if prev is false, it becomes true.
   */
-  const handleFetchCustomers = () => {
+  function handleFetchCustomers() {
     setTriggerFetch((prev) => !prev);
   };
 
+  function handleSidebarItemClick(item) {
+    setActiveSidebarItem(item);
+  }
+
   return (
     <div className="dashboard">
-      <Sidebar logout={logout} />
+      <Sidebar
+        logout={logout}
+        onSidebarItemClick={handleSidebarItemClick}
+      />
       <div className="dashboard-container">
         {/* <Header /> */}
         {/* home container */}
-        <div className={`dashboard-container ${SidebarExpanded
-          ? 'expanded'
-          : 'collapsed'}`}
-        >
+        <div className={`dashboard-container ${SidebarExpanded ? 'expanded' : 'collapsed'}`}>
           <div className="sticky-sidebar">
             <div className="dashboard-list">
-              <div className="dashboard-list-title">
-                {/* Customers */}
-              </div>
-              <CustomerList listData={customers} onFetchCustomers={handleFetchCustomers} />
+              {/* <div className="dashboard-list-title"> */}
+                {activeSidebarItem === 'dashboard' &&
+                  <div>Dashboard</div>}
+                {activeSidebarItem === 'customers' &&
+                <CustomerList
+                  listData={customers}
+                  onFetchCustomers={handleFetchCustomers} />}
+              {/* </div> */}
             </div>
           </div>
         </div>

@@ -11,7 +11,7 @@ import LogoutSharpIcon from '@mui/icons-material/LogoutSharp';
 import { useNavigate } from "react-router-dom";
 
 
-function Sidebar({ logout }) {
+function Sidebar({ logout, onSidebarItemClick }) {
   const navigate = useNavigate();
   const [isExpanded, setExpanded] = useState(true);
 
@@ -20,6 +20,12 @@ function Sidebar({ logout }) {
     logout();
     navigate("/");
   }
+
+  function handleItemClick(item) {
+    if (onSidebarItemClick) {
+      onSidebarItemClick(item);
+    }
+  };
 
   return (
     <div className={`sidebar ${isExpanded ? 'expanded' : 'collapsed'}`}>
@@ -35,13 +41,13 @@ function Sidebar({ logout }) {
       </div> */}
       <div className={`sidebar-center ${isExpanded ? '' : 'collapsed'}`}>
         <ul>
-          <li>
+          <li onClick={() => handleItemClick('dashboard')}>
             <DashboardIcon className="sidebar-li-icon" />
             {isExpanded && <span>Dashboard</span>}
           </li>
-          <li>
+          <li onClick={() => handleItemClick('customers')}>
             <PeopleSharpIcon className="sidebar-li-icon" />
-            {isExpanded && <span>Customer</span>}
+            {isExpanded && <span>Customers</span>}
           </li>
           <li>
             <QrCodeSharpIcon className="sidebar-li-icon" />
