@@ -8,7 +8,7 @@ import InventorySharpIcon from '@mui/icons-material/InventorySharp';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import LogoutSharpIcon from '@mui/icons-material/LogoutSharp';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 
 function Sidebar({ logout, onSidebarItemClick }) {
@@ -45,10 +45,12 @@ function Sidebar({ logout, onSidebarItemClick }) {
             <DashboardIcon className="sidebar-li-icon" />
             {isExpanded && <span>Dashboard</span>}
           </li>
+          <Link to="/dashboard/customers">
           <li onClick={() => handleItemClick('customers')}>
             <PeopleSharpIcon className="sidebar-li-icon" />
             {isExpanded && <span>Customers</span>}
           </li>
+          </Link>
           <li>
             <QrCodeSharpIcon className="sidebar-li-icon" />
             {isExpanded && <span>Inventory</span>}

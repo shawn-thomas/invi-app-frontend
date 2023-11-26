@@ -1,4 +1,5 @@
 import { useContext, useState, useEffect } from "react";
+import { Outlet } from 'react-router-dom';
 import './styles/Dashboard.css';
 import Sidebar from './Sidebar';
 import Header from './Header';
@@ -37,23 +38,21 @@ function Dashboard({ logout }) {
     fetchCustomers();
   }, [username, triggerFetch]);
 
-  /**trigger a fetch when customers are added, removed, or edited
+  /**
+   * Trigger a fetch when customers are added, removed, or edited.
    *
    * If prev is true, it becomes false, and if prev is false, it becomes true.
   */
+ 
   function handleFetchCustomers() {
     setTriggerFetch((prev) => !prev);
   };
 
-  function handleSidebarItemClick(item) {
-    setActiveSidebarItem(item);
-  }
 
   return (
     <div className="dashboard">
       <Sidebar
         logout={logout}
-        onSidebarItemClick={handleSidebarItemClick}
       />
       <div className="dashboard-container">
         {/* <Header /> */}
@@ -62,13 +61,14 @@ function Dashboard({ logout }) {
           <div className="sticky-sidebar">
             <div className="dashboard-list">
               {/* <div className="dashboard-list-title"> */}
-                {activeSidebarItem === 'dashboard' &&
+                {/* {activeSidebarItem === 'dashboard' &&
                   <div>Dashboard</div>}
                 {activeSidebarItem === 'customers' &&
                 <CustomerList
                   listData={customers}
-                  onFetchCustomers={handleFetchCustomers} />}
+                  onFetchCustomers={handleFetchCustomers} />} */}
               {/* </div> */}
+              <Outlet />
             </div>
           </div>
         </div>

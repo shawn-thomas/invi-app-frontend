@@ -33,6 +33,8 @@ function CustomerList({ listData, onFetchCustomers }) {
   const [updatedCustomerData, setUpdatedCustomerData] = useState(null);
   const [formErrors, setFormErrors] = useState([]);
 
+  console.log(typeof(onFetchCustomers));
+
   // Filter list based on the search query
   const filteredRows = listData.filter((row) => {
     // Check if any value in the curr row contains the search query
