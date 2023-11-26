@@ -25,11 +25,8 @@ function useCustomers(user) {
         setCustomers([]);
       }
     }
-
-    if (triggerFetch) {
-      fetchCustomers();
-      setTriggerFetch(false);
-    }
+    
+    fetchCustomers();
   }, [user, triggerFetch]);
 
   function handleFetchCustomers() {
