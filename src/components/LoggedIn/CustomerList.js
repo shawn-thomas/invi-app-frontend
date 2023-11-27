@@ -19,7 +19,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import * as XLSX from 'xlsx';
 import InviApi from '../../api';
 import formatPhoneNumber from '../../common/formatPhoneNumber';
-import './styles/CustomerList.css';
+import './styles/GenericList.css';
 
 function CustomerList({ listData, onFetchCustomers }) {
   const [searchQuery, setSearchQuery] = useState("");
