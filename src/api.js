@@ -74,7 +74,7 @@ class InviApi {
   }
 
 
-  /** Accepts a username and retrieves all customers for specified user.
+  /** Retrieves all customers for specified user.
    *
    * Returns
    * [{ customerName, firstName, lastName, email, phone, address }, ...]
@@ -83,10 +83,10 @@ class InviApi {
   static async getCustomers() {
     let res = await this.request(`customer/`);
 
-    return res
+    return res;
   }
 
-  /** Create a customer (from data)
+  /** Create a customer from data.
    *
    * data should be { customerName, firstName, lastName, email, phone, address }
    *
@@ -95,7 +95,7 @@ class InviApi {
 
 
   static async createCustomer({ customerName, firstName, lastName, email, phone, address }) {
-    const data = { customerName, firstName, lastName, email, phone, address};
+    const data = { customerName, firstName, lastName, email, phone, address };
     let res = await this.request("customer/", data, "post");
 
 
@@ -122,9 +122,67 @@ class InviApi {
    */
 
   static async updateCustomer(handle, data) {
-      const res = await this.request(`customer/${handle}`, data, "patch");
-      return res.customer;
+    const res = await this.request(`customer/${handle}`, data, "patch");
+    return res.customer;
   }
+
+
+  /** Retrieves all products for specified user.
+ *
+ * Returns
+ * { inventory:
+ *  [{ sku, username, productName, description, price, quantityAvailable,...]}
+ */
+
+  static async getProducts() {
+    let res = await this.request(`inventory/`);
+
+    return res;
+  }
+
+
+  /** Create a new product from data.
+ *
+ * data should be { sku, username, productName, description, price, quantityAvailable }
+ *
+ * Returns { sku, productName, description, price, quantityAvailable }
+*/
+
+
+  static async createProduct({ sku, productName, description, price, quantityAvailable }) {
+    const data = { sku, productName, description, price, quantityAvailable };
+    let res = await this.request("inventory/", data, "post");
+
+
+    return res;
+  }
+
+
+  /**
+   * Send a patch request to the API to update the customer that matches the
+   * specified handle (string). Accepts a handle, and data object containing
+   * the fields to be updated.
+   *
+   * data can be { productName, description, price, quantityAvailable }
+   *
+   * Returns { sku, productName, description, price, quantityAvailable }
+   */
+
+  static async updateProduct(sku, data) {
+    const res = await this.request(`inventory/${sku}`, data, "patch");
+    return res.customer;
+  }
+
+
+    /**
+ * Send a delete request to remove the product that matches the specified
+ * handle (string).
+ */
+
+    static async removeProduct(sku) {
+      await this.request(`inventory/${sku}`, {}, "delete");
+    }
+
 
 }
 

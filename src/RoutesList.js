@@ -1,4 +1,5 @@
 import CustomerList from './components/LoggedIn/CustomerList';
+import ProductList from './components/LoggedIn/ProductList';
 import userContext from './userContext';
 import InviApi from './api';
 import { Route, Routes, Navigate } from 'react-router-dom';
@@ -8,6 +9,8 @@ import SignupForm from './components/LoggedOut/LoginSignup/SignupForm';
 import Dashboard from './components/LoggedIn/Dashboard';
 import { useState, useEffect, useContext } from "react";
 import useCustomers from './hooks/useCustomers';
+import useProducts from './hooks/useProducts'
+import { jwtDecode } from 'jwt-decode';
 
 
 /** Define routes.
@@ -25,6 +28,8 @@ import useCustomers from './hooks/useCustomers';
 function RoutesList({ signUp, login, logout, auth }) {
   const { username } = useContext(userContext);
   const { customers, handleFetchCustomers } = useCustomers(username);
+  const { products, handleFetchProducts } = useProducts(username);
+
 
   if (!auth) {
     return (
@@ -42,6 +47,7 @@ function RoutesList({ signUp, login, logout, auth }) {
       <Routes>
         <Route path="/dashboard/*" element={<Dashboard logout={logout} />}>
           <Route path="customers" element={<CustomerList listData={customers} onFetchCustomers={handleFetchCustomers} />} />
+          <Route path="inventory" element={<ProductList listData={products} onFetchProducts={handleFetchProducts}/>}/>
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>

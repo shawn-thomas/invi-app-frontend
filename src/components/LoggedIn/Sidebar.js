@@ -21,11 +21,6 @@ function Sidebar({ logout, onSidebarItemClick }) {
     navigate("/");
   }
 
-  function handleItemClick(item) {
-    if (onSidebarItemClick) {
-      onSidebarItemClick(item);
-    }
-  };
 
   return (
     <div className={`sidebar ${isExpanded ? 'expanded' : 'collapsed'}`}>
@@ -41,20 +36,22 @@ function Sidebar({ logout, onSidebarItemClick }) {
       </div> */}
       <div className={`sidebar-center ${isExpanded ? '' : 'collapsed'}`}>
         <ul>
-          <li onClick={() => handleItemClick('dashboard')}>
+          <li>
             <DashboardIcon className="sidebar-li-icon" />
             {isExpanded && <span>Dashboard</span>}
           </li>
           <Link to="/dashboard/customers">
-          <li onClick={() => handleItemClick('customers')}>
+          <li>
             <PeopleSharpIcon className="sidebar-li-icon" />
             {isExpanded && <span>Customers</span>}
           </li>
           </Link>
+          <Link to="/dashboard/inventory">
           <li>
             <QrCodeSharpIcon className="sidebar-li-icon" />
             {isExpanded && <span>Inventory</span>}
           </li>
+          </Link>
           <li>
             <RequestPageSharpIcon className="sidebar-li-icon" />
             {isExpanded && <span>Invoices</span>}
