@@ -22,12 +22,7 @@ const TOKEN_STORAGE_ID = "invi-token";
 
 function App() {
   const [currentUser, setCurrentUser] = useState({
-    data: {
-      username: "",
-      firstName: "",
-      lastName: "",
-      email: ""
-    },
+    data: null,
     infoLoaded: false,
   });
 
@@ -49,60 +44,40 @@ function App() {
   function logout() {
     setToken("");
     InviApi.token = "";
-    setCurrentUser({
-      infoLoaded: false,
-      data: {
-        username: "",
-        firstName: "",
-        lastName: "",
-        email: ""
-      }
-    });
   }
 
   useEffect(function fetchUserWhenMountedOrTokenChange() {
-    async function fetchUser() {
+    async function getCurrentUser() {
       if (token) {
         try {
-          let payload = jwtDecode(token);
-          let username = payload.username;
-          const userRes = await InviApi.getUser(username); // userData
+          let { username } = jwtDecode(token);
+          InviApi.token = token;
+          let currentUser = await InviApi.getUser(username);
           setCurrentUser({
             infoLoaded: true,
-            data: userRes
+            data: currentUser
           });
         } catch (err) {
           console.warn(err);
           setCurrentUser({
             infoLoaded: false,
-            data: {
-              username: "",
-              firstName: "",
-              lastName: "",
-              email: ""
-            }
+            data: null
           });
         }
       } else {
         setCurrentUser({
           infoLoaded: false,
-          data: {
-            username: "",
-            firstName: "",
-            lastName: "",
-            email: ""
-          }
+          data: null
         });
       }
     }
-    fetchUser();
+    getCurrentUser();
   }, [token]);
 
   return (
     <div className="App">
       <userContext.Provider value={{
-        username: currentUser.data.username,
-        firstName: currentUser.data.firstName
+        currentUser: currentUser.data
       }}>
         <BrowserRouter>
 
@@ -110,7 +85,6 @@ function App() {
             signUp={signUp}
             login={login}
             logout={logout}
-            auth={token}
           />
         </BrowserRouter>
       </userContext.Provider>
