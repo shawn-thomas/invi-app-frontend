@@ -21,16 +21,17 @@ const TOKEN_STORAGE_ID = "invi-token";
  */
 
 function App() {
-
-  const [user, setUser] = useState({
-    username: "",
-    firstName: "",
-    lastName: "",
-    email: ""
+  const [currentUser, setCurrentUser] = useState({
+    data: {
+      username: "",
+      firstName: "",
+      lastName: "",
+      email: ""
+    },
+    infoLoaded: false,
   });
 
   const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID, "");
-  // const [token, setToken] = useState("");
 
   /** Register a new user and update token */
   async function signUp(signupData) {
@@ -48,36 +49,60 @@ function App() {
   function logout() {
     setToken("");
     InviApi.token = "";
+    setCurrentUser({
+      infoLoaded: false,
+      data: {
+        username: "",
+        firstName: "",
+        lastName: "",
+        email: ""
+      }
+    });
   }
 
   useEffect(function fetchUserWhenMountedOrTokenChange() {
     async function fetchUser() {
       if (token) {
-        const payload = jwtDecode(token);
-        let username = payload.username;
         try {
+          let payload = jwtDecode(token);
+          let username = payload.username;
           const userRes = await InviApi.getUser(username); // userData
-          setUser(userRes);
+          setCurrentUser({
+            infoLoaded: true,
+            data: userRes
+          });
         } catch (err) {
           console.warn(err);
+          setCurrentUser({
+            infoLoaded: false,
+            data: {
+              username: "",
+              firstName: "",
+              lastName: "",
+              email: ""
+            }
+          });
         }
       } else {
-        setUser({
-          username: "",
-          firstName: "",
-          lastName: "",
-          email: ""
+        setCurrentUser({
+          infoLoaded: false,
+          data: {
+            username: "",
+            firstName: "",
+            lastName: "",
+            email: ""
+          }
         });
       }
     }
     fetchUser();
-  }, []);
+  }, [token]);
 
   return (
     <div className="App">
       <userContext.Provider value={{
-        username: user.username,
-        firstName: user.firstName
+        username: currentUser.data.username,
+        firstName: currentUser.data.firstName
       }}>
         <BrowserRouter>
 
@@ -86,7 +111,7 @@ function App() {
             login={login}
             logout={logout}
             auth={token}
-            />
+          />
         </BrowserRouter>
       </userContext.Provider>
     </div>
