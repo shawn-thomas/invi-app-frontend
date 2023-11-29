@@ -9,7 +9,7 @@ import InviApi from '../../../api';
 import Alert from '../../../common/Alert';
 
 
-function AddCustomer({ isOpen, onClose, onFetchCustomer }) {
+function AddCustomer({ isOpen, onClose, onFetchCustomer, onSuccess }) {
   const [newCustomerData, setNewCustomerData] = useState({
     customerName: '',
     firstName: '',
@@ -72,7 +72,8 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer }) {
         phone: '',
         address: '',
       });
-      
+
+      onSuccess();
       setFormErrors([]);
       onFetchCustomer();
       onClose();

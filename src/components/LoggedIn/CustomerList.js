@@ -9,13 +9,15 @@ import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import TablePagination from '@mui/material/TablePagination';
 import Button from '@mui/material/Button';
-import AddCustomer from './modals/AddCustomer';
-import DeleteCustomer from './modals/DeleteCustomer';
-import EditCustomer from './modals/EditCustomer';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import AddIcon from '@mui/icons-material/Add';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import AddCustomer from './modals/AddCustomer';
+import DeleteCustomer from './modals/DeleteCustomer';
+import EditCustomer from './modals/EditCustomer';
 import * as XLSX from 'xlsx';
 import InviApi from '../../api';
 import formatPhoneNumber from '../../common/formatPhoneNumber';
@@ -32,6 +34,8 @@ function CustomerList({ listData, onFetchCustomers }) {
   const [selectedCustomerData, setSelectedCustomerData] = useState(null);
   const [updatedCustomerData, setUpdatedCustomerData] = useState(null);
   const [formErrors, setFormErrors] = useState([]);
+  const [successUpdateMessage, setSuccessUpdateMessage] = useState(null);
+  const [successAddMessage, setSuccessAddMessage] = useState(null);
 
   // Filter list based on the search query
   const filteredRows = (Array.isArray(listData) && listData.length > 0)
@@ -81,6 +85,10 @@ function CustomerList({ listData, onFetchCustomers }) {
     setAddModalOpen(false);
   };
 
+  function handleAddCustomerSuccess() {
+    setSuccessAddMessage('Customer created successfully!');
+  };
+
 
   /** Customer Delete --------------------------------------------------------*/
 
@@ -127,6 +135,8 @@ function CustomerList({ listData, onFetchCustomers }) {
       setUpdatedCustomerData(updatedCustomer);
       onFetchCustomers();
       handleEditModalClose();
+
+      setSuccessUpdateMessage(`Customer ${firstName} ${lastName} updated successfully!`);
     } catch (error) {
       setFormErrors(error);
     }
@@ -143,6 +153,37 @@ function CustomerList({ listData, onFetchCustomers }) {
   return (
     <>
       <div className="dashboard-header">
+        <Snackbar
+          open={successUpdateMessage}
+          autoHideDuration={6000}
+          onClose={() => setSuccessUpdateMessage(null)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <MuiAlert
+            elevation={6}
+            variant="filled"
+            severity="success"
+            onClose={() => setSuccessUpdateMessage(null)}
+          >
+            {successUpdateMessage}
+          </MuiAlert>
+        </Snackbar>
+        <Snackbar
+          open={successAddMessage}
+          autoHideDuration={6000}
+          onClose={() => setSuccessAddMessage(null)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
+          <MuiAlert
+            elevation={6}
+            variant="filled"
+            severity="success"
+            onClose={() => setSuccessAddMessage(null)}
+            className="success-add-alert"
+          >
+            {successAddMessage}
+          </MuiAlert>
+        </Snackbar>
         <div className="dashboard-title"><h2>Customers</h2></div>
         <div className="dashboard-create-btn">
           <Button
@@ -222,6 +263,7 @@ function CustomerList({ listData, onFetchCustomers }) {
         isOpen={isAddModalOpen}
         onClose={handleAddModalClose}
         onFetchCustomer={onFetchCustomers}
+        onSuccess={handleAddCustomerSuccess}
       />
       <DeleteCustomer
         isOpen={isDeleteModalOpen}
