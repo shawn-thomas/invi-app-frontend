@@ -11,6 +11,8 @@ function Dashboard({ logout }) {
   const [SidebarExpanded, setSidebarExpanded] = useState(false);
 
   return (
+    <div className="dashboard-outer">
+    <Header />
     <div className="dashboard">
       <Sidebar
         logout={logout}
@@ -26,7 +28,9 @@ function Dashboard({ logout }) {
         </div>
       </div>
     </div>
+    </div>
   );
+
 }
 
 export default Dashboard;
