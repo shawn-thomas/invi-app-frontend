@@ -26,7 +26,7 @@ function RoutesList({ signUp, login, logout }) {
   const userData = useContext(userContext);
   const { currentUser } = userData;
   const username = currentUser?.username;
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const { customers, handleFetchCustomers } = useCustomers(username || '');
   const { products, handleFetchProducts } = useProducts(username || '');
@@ -38,8 +38,10 @@ function RoutesList({ signUp, login, logout }) {
   }, [currentUser]);
 
   if (loading) {
-    return <Dashboard />;
+    return <Dashboard logout={logout} />;
   }
+
+  console.log('Navigating to /' + (currentUser ? 'dashboard' : ''));
 
 
   if (!currentUser) {
