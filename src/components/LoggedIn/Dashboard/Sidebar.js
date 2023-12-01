@@ -1,4 +1,4 @@
-import './styles/Sidebar.css';
+import '../styles/Sidebar.css';
 import { useState } from 'react';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleSharpIcon from '@mui/icons-material/PeopleSharp';

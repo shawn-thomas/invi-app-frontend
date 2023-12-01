@@ -14,9 +14,9 @@ import AddIcon from '@mui/icons-material/Add';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import * as XLSX from 'xlsx';
-import InviApi from '../../api';
-import AddProduct from './modals/AddProduct';
-import './styles/GenericList.css';
+import InviApi from '../../../api';
+import AddProduct from '../modals/AddProduct';
+import '../styles/GenericList.css';
 
 function ProductList({ listData, onFetchProducts }) {
   const [searchQuery, setSearchQuery] = useState("");

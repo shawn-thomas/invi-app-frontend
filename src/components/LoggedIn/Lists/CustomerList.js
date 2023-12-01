@@ -15,13 +15,13 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import AddIcon from '@mui/icons-material/Add';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import AddCustomer from './modals/AddCustomer';
-import DeleteCustomer from './modals/DeleteCustomer';
-import EditCustomer from './modals/EditCustomer';
+import AddCustomer from '../modals/AddCustomer';
+import DeleteCustomer from '../modals/DeleteCustomer';
+import EditCustomer from '../modals/EditCustomer';
 import * as XLSX from 'xlsx';
-import InviApi from '../../api';
-import formatPhoneNumber from '../../common/formatPhoneNumber';
-import './styles/GenericList.css';
+import InviApi from '../../../api';
+import formatPhoneNumber from '../../../common/formatPhoneNumber';
+import '../styles/GenericList.css';
 
 function CustomerList({ listData, onFetchCustomers }) {
   const [searchQuery, setSearchQuery] = useState("");

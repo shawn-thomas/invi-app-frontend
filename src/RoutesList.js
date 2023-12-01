@@ -4,9 +4,9 @@ import userContext from './userContext';
 import Homepage from './components/LoggedOut/Homepage/Homepage';
 import LoginForm from './components/LoggedOut/LoginSignup/LoginForm';
 import SignupForm from './components/LoggedOut/LoginSignup/SignupForm';
-import Dashboard from './components/LoggedIn/Dashboard';
-import CustomerList from './components/LoggedIn/CustomerList';
-import ProductList from './components/LoggedIn/ProductList';
+import Dashboard from './components/LoggedIn/Dashboard/Dashboard';
+import CustomerList from './components/LoggedIn/Lists/CustomerList';
+import ProductList from './components/LoggedIn/Lists/ProductList';
 import useCustomers from './hooks/useCustomers';
 import useProducts from './hooks/useProducts';
 
