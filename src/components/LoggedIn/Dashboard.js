@@ -11,14 +11,13 @@ function Dashboard({ logout }) {
   const [SidebarExpanded, setSidebarExpanded] = useState(false);
 
   return (
-    <div className="dashboard-outer">
+    <div className="page">
     <Header />
     <div className="dashboard">
       <Sidebar
         logout={logout}
       />
       <div className="dashboard-container">
-        {/* <Header /> */}
         <div className={`dashboard-container ${SidebarExpanded ? 'expanded' : 'collapsed'}`}>
           <div className="sticky-sidebar">
             <div className="dashboard-list">
