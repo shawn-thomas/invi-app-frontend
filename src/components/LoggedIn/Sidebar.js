@@ -8,7 +8,7 @@ import InventorySharpIcon from '@mui/icons-material/InventorySharp';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import LogoutSharpIcon from '@mui/icons-material/LogoutSharp';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 
 function Sidebar({ logout, onSidebarItemClick }) {
@@ -21,11 +21,6 @@ function Sidebar({ logout, onSidebarItemClick }) {
     navigate("/");
   }
 
-  function handleItemClick(item) {
-    if (onSidebarItemClick) {
-      onSidebarItemClick(item);
-    }
-  };
 
   return (
     <div className={`sidebar ${isExpanded ? 'expanded' : 'collapsed'}`}>
@@ -41,18 +36,22 @@ function Sidebar({ logout, onSidebarItemClick }) {
       </div> */}
       <div className={`sidebar-center ${isExpanded ? '' : 'collapsed'}`}>
         <ul>
-          <li onClick={() => handleItemClick('dashboard')}>
+          <li>
             <DashboardIcon className="sidebar-li-icon" />
             {isExpanded && <span>Dashboard</span>}
           </li>
-          <li onClick={() => handleItemClick('customers')}>
+          <Link to="/dashboard/customers">
+          <li>
             <PeopleSharpIcon className="sidebar-li-icon" />
             {isExpanded && <span>Customers</span>}
           </li>
+          </Link>
+          <Link to="/dashboard/inventory">
           <li>
             <QrCodeSharpIcon className="sidebar-li-icon" />
             {isExpanded && <span>Inventory</span>}
           </li>
+          </Link>
           <li>
             <RequestPageSharpIcon className="sidebar-li-icon" />
             {isExpanded && <span>Invoices</span>}

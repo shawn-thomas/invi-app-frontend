@@ -1,8 +1,14 @@
+import { useState, useEffect, useContext } from "react";
 import { Route, Routes, Navigate } from 'react-router-dom';
+import userContext from './userContext';
 import Homepage from './components/LoggedOut/Homepage/Homepage';
 import LoginForm from './components/LoggedOut/LoginSignup/LoginForm';
 import SignupForm from './components/LoggedOut/LoginSignup/SignupForm';
 import Dashboard from './components/LoggedIn/Dashboard';
+import CustomerList from './components/LoggedIn/CustomerList';
+import ProductList from './components/LoggedIn/ProductList';
+import useCustomers from './hooks/useCustomers';
+import useProducts from './hooks/useProducts';
 
 /** Define routes.
  *
@@ -16,8 +22,30 @@ import Dashboard from './components/LoggedIn/Dashboard';
  * App -> RoutesList -> { Homepage }
  */
 
-function RoutesList({ signUp, login, logout, auth }) {
-  if (!auth) {
+function RoutesList({ signUp, login, logout }) {
+  const userData = useContext(userContext);
+  const { currentUser } = userData;
+  const username = currentUser?.username;
+  const [loading, setLoading] = useState(false);
+
+  const { customers, handleFetchCustomers } = useCustomers(username || '');
+  const { products, handleFetchProducts } = useProducts(username || '');
+
+  useEffect(() => {
+    if (currentUser) {
+      setLoading(false);
+    }
+  }, [currentUser]);
+
+  if (loading) {
+    return <Dashboard logout={logout} />;
+  }
+
+  console.log('Navigating to /' + (currentUser ? 'dashboard' : ''));
+
+
+  if (!currentUser) {
+    console.log('Navigating to /');
     return (
       <Routes>
         <Route path="/login" element={<LoginForm login={login} />} />
@@ -26,13 +54,31 @@ function RoutesList({ signUp, login, logout, auth }) {
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     );
-  }
-
-  else {
+  } else {
+    console.log('Navigating to /dashboard');
     return (
       <Routes>
+        <Route path="/dashboard" element={<Dashboard logout={logout} />}>
+          <Route
+            path="/dashboard/customers"
+            element={
+              <CustomerList
+                listData={customers}
+                onFetchCustomers={handleFetchCustomers}
+              />
+            }
+          />
+          <Route
+            path="/dashboard/inventory"
+            element={
+              <ProductList
+                listData={products}
+                onFetchCustomers={handleFetchProducts}
+              />
+            }
+          />
+        </Route>
         <Route path="*" element={<Navigate to="/dashboard" />} />
-        <Route path="/dashboard" element={<Dashboard logout={logout} />} />
       </Routes>
     );
   }

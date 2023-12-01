@@ -9,15 +9,16 @@ import InviApi from '../../../api';
 import Alert from '../../../common/Alert';
 
 
-function AddCustomer({ isOpen, onClose, onFetchCustomer, onSuccess }) {
-  const [newCustomerData, setNewCustomerData] = useState({
-    customerName: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    address: '',
+function AddProduct({ isOpen, onClose, onFetchCustomer }) {
+  const [newProductData, setNewProductData] = useState({
+    sku: '',
+    productName: '',
+    description: '',
+    price: '',
+    quantityAvailable: '',
   });
+
+  console.log(newProductData)
 
   const [validationErrors, setValidationErrors] = useState({});
   const [formErrors, setFormErrors] = useState([]);
@@ -25,7 +26,7 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer, onSuccess }) {
   /** Handles input changes and updates the new customer data. */
   function handleInputChange(evt) {
     const { name, value } = evt.target;
-    setNewCustomerData((prevData) => ({
+    setNewProductData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
@@ -40,14 +41,17 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer, onSuccess }) {
   function validateForm() {
     const errors = {};
 
-    if (!newCustomerData.customerName) {
-      errors.customerName = 'Customer Name is required';
+    if (!newProductData.sku) {
+      errors.sku = 'SKU is required';
     }
-    if (!newCustomerData.firstName) {
-      errors.firstName = 'First Name is required';
+    if (!newProductData.productName) {
+      errors.name = 'Product name is required';
     }
-    if (!newCustomerData.email) {
-      errors.email = 'Email is required';
+    if (!newProductData.price) {
+      errors.price = 'Price is required';
+    }
+    if (!newProductData.quantityAvailable) {
+      errors.quantity = 'Quantity is required';
     }
 
     setValidationErrors(errors);
@@ -55,25 +59,23 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer, onSuccess }) {
     return Object.keys(errors).length === 0;
   }
 
-  /** Handles the addition of a new customer. */
-  async function handleAddCustomer() {
+  /** Handles the addition of a new product. */
+  async function handleAddProduct() {
     try {
       if (!validateForm()) {
         return;
       }
 
-      await InviApi.createCustomer(newCustomerData);
+      await InviApi.createProduct(newProductData);
 
-      setNewCustomerData({
-        customerName: '',
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        address: '',
+      setNewProductData({
+        sku: '',
+        productName: '',
+        description: '',
+        price: '',
+        quantityAvailable: '',
       });
 
-      onSuccess();
       setFormErrors([]);
       onFetchCustomer();
       onClose();
@@ -87,13 +89,12 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer, onSuccess }) {
 
   /** Closes the dialog and resets the form. */
   function handleClose() {
-    setNewCustomerData({
-      customerName: '',
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      address: '',
+    setNewProductData({
+      sku: '',
+      productName: '',
+      description: '',
+      price: '',
+      quantityAvailable: '',
     });
 
     setFormErrors([]);
@@ -102,80 +103,68 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer, onSuccess }) {
 
   return (
     <Dialog open={isOpen} onClose={handleClose}>
-      <DialogTitle>Create New Customer</DialogTitle>
+      <DialogTitle>Create New Product</DialogTitle>
       <DialogContent>
         {formErrors.length > 0 && (
           <Alert messages={formErrors} />
         )}
 
         <TextField
-          label="Customer Name"
-          name="customerName"
-          value={newCustomerData.customerName}
+          label="SKU"
+          name="sku"
+          value={newProductData.sku}
           onChange={handleInputChange}
           fullWidth
           margin="normal"
-          error={Boolean(validationErrors.customerName)}
-          helperText={validationErrors.customerName}
+          error={Boolean(validationErrors.sku)}
+          helperText={validationErrors.sku}
           required
         />
         <TextField
-          label="First Name"
-          name="firstName"
-          value={newCustomerData.firstName}
+          label="Name"
+          name="productName"
+          value={newProductData.productName}
           onChange={handleInputChange}
           fullWidth
           margin="normal"
-          error={Boolean(validationErrors.firstName)}
-          helperText={validationErrors.firstName}
+          error={Boolean(validationErrors.productName)}
+          helperText={validationErrors.productName}
           required
         />
         <TextField
-          label="Last Name"
-          name="lastName"
-          value={newCustomerData.lastName}
+          label="Description"
+          name="description"
+          value={newProductData.description}
           onChange={handleInputChange}
           fullWidth
           margin="normal"
+        />
+        <TextField
+          label="Price"
+          name="price"
+          value={newProductData.price}
+          onChange={handleInputChange}
+          fullWidth
+          margin="normal"
+          error={Boolean(validationErrors.price)}
+          helperText={validationErrors.price}
           required
         />
         <TextField
-          label="Email"
-          name="email"
-          value={newCustomerData.email}
+          label="Quantity"
+          name="quantityAvailable"
+          value={newProductData.quantityAvailable}
           onChange={handleInputChange}
           fullWidth
           margin="normal"
-          error={Boolean(validationErrors.email)}
-          helperText={validationErrors.email}
-          required
-        />
-        <TextField
-          label="Phone"
-          name="phone"
-          value={newCustomerData.phone}
-          onChange={handleInputChange}
-          fullWidth
-          margin="normal"
-          error={Boolean(validationErrors.phone)}
-          helperText={validationErrors.phone}
-          required
-        />
-        <TextField
-          label="Address"
-          name="address"
-          value={newCustomerData.address}
-          onChange={handleInputChange}
-          fullWidth
-          margin="normal"
-          error={Boolean(validationErrors.address)}
-          helperText={validationErrors.address}
+          error={Boolean(validationErrors.quantityAvailable)}
+          helperText={validationErrors.quantityAvailable}
           required
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleAddCustomer} variant="outlined" color="primary">
-          Add Customer
+        <Button onClick={handleAddProduct} variant="outlined" color="primary">
+          Add Product
         </Button>
         <Button onClick={handleClose} color="error">
           Cancel
@@ -185,4 +174,4 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer, onSuccess }) {
   );
 }
 
-export default AddCustomer;
+export default AddProduct;

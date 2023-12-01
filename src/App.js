@@ -21,16 +21,12 @@ const TOKEN_STORAGE_ID = "invi-token";
  */
 
 function App() {
-
-  const [user, setUser] = useState({
-    username: "",
-    firstName: "",
-    lastName: "",
-    email: ""
+  const [currentUser, setCurrentUser] = useState({
+    data: null,
+    infoLoaded: false,
   });
 
   const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID, "");
-  // const [token, setToken] = useState("");
 
   /** Register a new user and update token */
   async function signUp(signupData) {
@@ -51,33 +47,37 @@ function App() {
   }
 
   useEffect(function fetchUserWhenMountedOrTokenChange() {
-    async function fetchUser() {
+    async function getCurrentUser() {
       if (token) {
-        const payload = jwtDecode(token);
-        let username = payload.username;
         try {
-          const userRes = await InviApi.getUser(username); // userData
-          setUser(userRes);
+          let { username } = jwtDecode(token);
+          InviApi.token = token;
+          let currentUser = await InviApi.getUser(username);
+          setCurrentUser({
+            infoLoaded: true,
+            data: currentUser
+          });
         } catch (err) {
           console.warn(err);
+          setCurrentUser({
+            infoLoaded: false,
+            data: null
+          });
         }
       } else {
-        setUser({
-          username: "",
-          firstName: "",
-          lastName: "",
-          email: ""
+        setCurrentUser({
+          infoLoaded: false,
+          data: null
         });
       }
     }
-    fetchUser();
-  }, []);
+    getCurrentUser();
+  }, [token]);
 
   return (
     <div className="App">
       <userContext.Provider value={{
-        username: user.username,
-        firstName: user.firstName
+        currentUser: currentUser.data
       }}>
         <BrowserRouter>
 
@@ -85,8 +85,7 @@ function App() {
             signUp={signUp}
             login={login}
             logout={logout}
-            auth={token}
-            />
+          />
         </BrowserRouter>
       </userContext.Provider>
     </div>
