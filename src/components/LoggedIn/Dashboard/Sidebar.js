@@ -24,16 +24,6 @@ function Sidebar({ logout, onSidebarItemClick }) {
 
   return (
     <div className={`sidebar ${isExpanded ? 'expanded' : 'collapsed'}`}>
-      {/* <div className="sidebar-top" onClick={() => setExpanded(!isExpanded)}>
-        <span className="sidebar-logo">
-          <img
-            src="https://images.ctfassets.net/spoqsaf9291f/3352a7f0-cb1a-49ba-b5d1-26df3b522fa2/3652cfd770ca15516defe196a357a6c4/3352a7f0-cb1a-49ba-b5d1-26df3b522fa2.png"
-            alt="SendOwl"
-            className="sidebar-logo-icon"
-          />
-          {isExpanded && <h2>Invi</h2>}
-        </span>
-      </div> */}
       <div className={`sidebar-center ${isExpanded ? '' : 'collapsed'}`}>
         <ul>
           <li>
