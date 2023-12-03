@@ -1,0 +1,57 @@
+.invoice-header {
+  margin-bottom: 2rem;
+}
+
+.invoice-number {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+  font-weight: 500;
+}
+
+.invoice-number label {
+  display: flex;
+  align-items: flex-end;
+  font-size: 2em;
+  margin-right: 10px;
+}
+
+.invoice-number input {
+  padding: 8px;
+  font-size: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  width: 3em;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.lineitem-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 8px;
+  margin-bottom: 16px;
+  margin-top: 8px;
+}
+
+.lineitem-button {
+  background-color: #4CAF50;
+  width: fit-content;
+  color: white;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+}
+
+.invoice-total {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.invoice-create {
+  display: flex;
+  justify-content: flex-end;
+}
