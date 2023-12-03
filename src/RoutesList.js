@@ -7,6 +7,7 @@ import SignupForm from './components/LoggedOut/LoginSignup/SignupForm';
 import Dashboard from './components/LoggedIn/Dashboard/Dashboard';
 import CustomerList from './components/LoggedIn/Lists/CustomerList';
 import ProductList from './components/LoggedIn/Lists/ProductList';
+import InvoiceForm from "./components/LoggedIn/Invoice/InvoiceForm";
 import useCustomers from './hooks/useCustomers';
 import useProducts from './hooks/useProducts';
 
@@ -26,7 +27,7 @@ function RoutesList({ signUp, login, logout }) {
   const userData = useContext(userContext);
   const { currentUser } = userData;
   const username = currentUser?.username;
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const { customers, handleFetchCustomers } = useCustomers(username || '');
   const { products, handleFetchProducts } = useProducts(username || '');
@@ -73,7 +74,19 @@ function RoutesList({ signUp, login, logout }) {
             element={
               <ProductList
                 listData={products}
-                onFetchCustomers={handleFetchProducts}
+                onFetchProducts={handleFetchProducts}
+              />
+            }
+          />
+          <Route
+            path="/dashboard/invoice"
+            element={
+              <InvoiceForm
+                user={currentUser}
+                customers={customers}
+                products={products}
+                onFetchproducts={handleFetchProducts}
+                onFetchCustomers={handleFetchCustomers}
               />
             }
           />
