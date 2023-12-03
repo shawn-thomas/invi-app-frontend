@@ -127,3 +127,7 @@
 .resize-icon:hover {
   opacity: 0.7;
 }
+
+.sidebar-link {
+  text-decoration: none;
+}
