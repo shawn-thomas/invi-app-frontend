@@ -1,26 +1,28 @@
 import React, { useState } from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import TextField from '@mui/material/TextField';
-import TablePagination from '@mui/material/TablePagination';
-import Button from '@mui/material/Button';
-import Snackbar from '@mui/material/Snackbar';
+import {
+  Button,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TextField,
+  Snackbar,
+} from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import AddIcon from '@mui/icons-material/Add';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import AddCustomer from '../modals/AddCustomer';
-import DeleteCustomer from '../modals/DeleteCustomer';
-import EditCustomer from '../modals/EditCustomer';
 import * as XLSX from 'xlsx';
 import InviApi from '../../../api';
 import formatPhoneNumber from '../../../common/formatPhoneNumber';
+import AddCustomer from '../modals/AddCustomer';
+import DeleteCustomer from '../modals/DeleteCustomer';
+import EditCustomer from '../modals/EditCustomer';
 import '../styles/GenericList.css';
 
 function CustomerList({ listData, onFetchCustomers }) {
