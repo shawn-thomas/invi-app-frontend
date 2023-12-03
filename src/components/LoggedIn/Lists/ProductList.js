@@ -26,9 +26,6 @@ function ProductList({ listData, onFetchProducts }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isAddModalOpen, setAddModalOpen] = useState(false);
-  // const [selectedProductData, setSelectedProductData] = useState(null);
-  // const [updatedProductData, setUpdatedProductData] = useState(null);
-  // const [formErrors, setFormErrors] = useState([]);
 
   // Filter list based on the search query
   const filteredRows = (Array.isArray(listData) && listData.length > 0)
@@ -87,7 +84,7 @@ function ProductList({ listData, onFetchProducts }) {
     XLSX.writeFile(wb, 'inventory.xlsx');
   };
 
-
+  console.log("products", listData)
   return (
     <>
       <div className="dashboard-header">
@@ -140,7 +137,7 @@ function ProductList({ listData, onFetchProducts }) {
                 <TableCell className="db-table-cell">{row.name}</TableCell>
                 <TableCell className="db-table-cell">{row.description}</TableCell>
                 <TableCell className="db-table-cell">{row.price}</TableCell>
-                <TableCell className="db-table-cell">{row.quantity}</TableCell>
+                <TableCell className="db-table-cell">{row.stock}</TableCell>
                 <TableCell className="db-table-cell">
                   <EditOutlinedIcon
                     style={{
