@@ -43,8 +43,10 @@ function Sidebar({ logout, onSidebarItemClick }) {
           </li>
           </Link>
           <li>
+            <Link to="/dashboard/invoice">
             <RequestPageSharpIcon className="sidebar-li-icon" />
             {isExpanded && <span>Invoices</span>}
+            </Link>
           </li>
           <li>
             <InventorySharpIcon className="sidebar-li-icon" />
