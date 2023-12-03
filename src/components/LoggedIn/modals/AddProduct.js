@@ -74,13 +74,13 @@ function AddProduct({ isOpen, onClose, onFetchCustomer }) {
         return;
       }
 
-      setNewProductData((prevData) => ({
-        ...prevData,
+      const updatedData = {
+        ...newProductData,
         price,
         quantityAvailable,
-      }));
+      };
 
-      await InviApi.createProduct(newProductData);
+      await InviApi.createProduct(updatedData);
 
       setNewProductData({
         sku: '',
@@ -97,7 +97,7 @@ function AddProduct({ isOpen, onClose, onFetchCustomer }) {
       setFormErrors([error.message]);
     }
   }
-
+  
   /** Closes the dialog and resets the form. */
   function handleClose() {
     setNewProductData({
