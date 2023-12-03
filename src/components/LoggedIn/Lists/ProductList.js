@@ -94,10 +94,10 @@ function ProductList({ listData, onFetchProducts }) {
             variant="contained"
             color="primary"
             startIcon={<AddIcon />}
-            sx={{ marginBottom: 2 }}
+            sx={{ marginBottom: 2, height: 36 }}
             onClick={handleAddModalOpen}
           >
-            Add new
+            Create
           </Button>
           <Button
             variant="outlined"

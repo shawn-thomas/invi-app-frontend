@@ -190,9 +190,10 @@ function CustomerList({ listData, onFetchCustomers }) {
             variant="contained"
             color="primary"
             startIcon={<AddIcon />}
-            sx={{ marginBottom: 2 }}
-            onClick={handleAddModalOpen}>
-            Add new
+            sx={{ marginBottom: 2, height: 36 }}
+            onClick={handleAddModalOpen}
+          >
+            Create
           </Button>
           <Button
             variant="outlined"
