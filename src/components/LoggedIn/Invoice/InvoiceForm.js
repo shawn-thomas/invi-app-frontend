@@ -5,7 +5,9 @@ import {
   Typography,
   Button,
   Grid,
+  Snackbar,
 } from '@mui/material';
+import MuiAlert from '@mui/material/Alert';
 import InvoiceSender from './InvoiceSender';
 import InvoiceRecipient from './InvoiceRecipient';
 import InvoiceItems from './InvoiceItems';
@@ -34,6 +36,8 @@ function InvoiceForm({ user, customers, products, onFetchProducts, onFetchCustom
   const [invoiceItems, setInvoiceItems] = useState([]);
   const [invoiceTotal, setInvoiceTotal] = useState(null);
   const [itemsMap, setItemsMap] = useState(null);
+  const [successAddMessage, setSuccessAddMessage] = useState(null);
+
 
   useEffect(() => {
     if (invoiceItems.length > 0) {
@@ -108,6 +112,8 @@ function InvoiceForm({ user, customers, products, onFetchProducts, onFetchCustom
 
       const createdInvoice = await InviApi.createInvoice(requestData);
 
+      setSuccessAddMessage(`Invoice ${invoiceNumber} created successfully!`);
+
       console.log('Invoice created successfully:', createdInvoice);
 
     } catch (error) {
@@ -117,6 +123,22 @@ function InvoiceForm({ user, customers, products, onFetchProducts, onFetchCustom
 
   return (
     <Container maxWidth="lg" style={{ margin: '20px auto', padding: '20px' }}>
+      <Snackbar
+        open={!!successAddMessage}
+        autoHideDuration={6000}
+        onClose={() => setSuccessAddMessage(null)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          severity="success"
+          onClose={() => setSuccessAddMessage(null)}
+          className="success-add-alert"
+        >
+          {successAddMessage}
+        </MuiAlert>
+      </Snackbar>
       <Paper elevation={3} style={{ padding: '20px', marginBottom: '20px' }}>
         <div className='invoice-header'>
           <div className='invoice-number'>
