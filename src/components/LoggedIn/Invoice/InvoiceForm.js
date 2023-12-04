@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   Paper,
@@ -10,6 +10,7 @@ import InvoiceSender from './InvoiceSender';
 import InvoiceRecipient from './InvoiceRecipient';
 import InvoiceItems from './InvoiceItems';
 import InvoiceTotal from './InvoiceTotal';
+import InviApi from '../../../api';
 import '../styles/InvoiceForm.css';
 
 const initialInvoice = {
@@ -28,18 +29,30 @@ const initialInvoice = {
 
 function InvoiceForm({ user, customers, products, onFetchProducts, onFetchCustomers }) {
   const [invoice, setInvoice] = useState(initialInvoice);
-  const [invoiceNumber, setInvoiceNumber] = useState('');
-  const [invoiceRecipient, setInvoiceRecipient] = useState({
-    name: '',
-    address: '',
-    email: '',
-  });
+  const [invoiceNumber, setInvoiceNumber] = useState(null);
+  const [invoiceRecipient, setInvoiceRecipient] = useState(null);
   const [invoiceItems, setInvoiceItems] = useState([]);
+  const [invoiceTotal, setInvoiceTotal] = useState(null);
+  const [itemsMap, setItemsMap] = useState(null);
 
-  console.log("Invoice Number: ", invoiceNumber);
-  console.log("Invoice Recipient: ", invoiceRecipient);
-  console.log("Invoice Items: ", invoiceItems);
+  useEffect(() => {
+    if (invoiceItems.length > 0) {
+      const itemsMap = invoiceItems.map((item) => {
+        return {
+          sku: item.sku,
+          quantity: item.quantity,
+          unitPrice: +item.price
+        };
+      });
 
+      let total = 0;
+      for (let item of invoiceItems) {
+        total += item.total;
+      }
+      setInvoiceTotal(total);
+      setItemsMap(itemsMap);
+    }
+  }, [invoiceItems]);
 
   function handleInvoiceNumberChange(evt) {
     setInvoiceNumber((prevInvoiceNumber) => {
@@ -77,14 +90,30 @@ function InvoiceForm({ user, customers, products, onFetchProducts, onFetchCustom
   };
 
   function handleDeleteInvoiceRecipient() {
-    setInvoiceRecipient({
-      name: '',
-      address: '',
-      email: '',
-    });
+    setInvoiceRecipient(null);
     console.log('recipient removed: ', invoiceRecipient);
   };
 
+
+  const handleCreateInvoice = async () => {
+    try {
+      const requestData = {
+        invoiceId: invoiceNumber,
+        customerHandle: invoiceRecipient.handle,
+        invoiceDate: '2023-03-01',
+        totalAmount: invoiceTotal,
+        status: 'pending',
+        items: itemsMap,
+      };
+
+      const createdInvoice = await InviApi.createInvoice(requestData);
+
+      console.log('Invoice created successfully:', createdInvoice);
+
+    } catch (error) {
+      console.error('Error creating invoice:', error);
+    }
+  };
 
   return (
     <Container maxWidth="lg" style={{ margin: '20px auto', padding: '20px' }}>
@@ -144,10 +173,14 @@ function InvoiceForm({ user, customers, products, onFetchProducts, onFetchCustom
         </div>
 
         <div className='invoice-create'>
-          <Button variant="contained" color="primary" style={{ marginTop: '1rem' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ marginTop: '1rem' }}
+            onClick={handleCreateInvoice}>
             Create
           </Button>
-          </div>
+        </div>
       </Paper>
     </Container>
   );

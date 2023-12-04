@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import {
-    Grid,
-    Autocomplete,
-    TextField,
-    Typography,
-    Button,
-    Box
-  } from '@mui/material';
+  Grid,
+  Autocomplete,
+  TextField,
+  Typography,
+  Button,
+  Box
+} from '@mui/material';
 import AddCustomer from '../modals/AddCustomer';
 
 function InvoiceRecipient({
@@ -21,7 +21,8 @@ function InvoiceRecipient({
     setSelectedCustomer(value);
 
     const recipient = {
-      name: value ? value.customerName : '',
+      handle: value ? value.handle : '',
+      name : value ? value.customerName : '',
       address: '',
       email: value ? value.email : '',
     };
@@ -37,6 +38,7 @@ function InvoiceRecipient({
   }
 
   function updateRecipient(recipient) {
+    onInputChange('recipient', 'handle', recipient.handle);
     onInputChange('recipient', 'name', recipient.name);
     onInputChange('recipient', 'address', recipient.address);
     onInputChange('recipient', 'email', recipient.email);
