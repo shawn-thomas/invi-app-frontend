@@ -174,16 +174,57 @@ class InviApi {
   }
 
 
-    /**
+  /**
  * Send a delete request to remove the product that matches the specified
  * handle (string).
  */
 
-    static async removeProduct(sku) {
-      await this.request(`inventory/${sku}`, {}, "delete");
+  static async removeProduct(sku) {
+    await this.request(`inventory/${sku}`, {}, "delete");
+  }
+
+  /** Create an invoice (from data), update db, return new invoice data.
+   *
+   * data should be
+   * { invoiceId,
+   *  customerHandle,
+   *  invoiceDate,
+   *  totalAmount,
+   *  status,
+   *  items: [{ sku, quantity, unit_price }] }
+   *
+   * Returns { invoiceId,
+   *           customerHandle,
+   *           invoiceDate,
+   *           dateCreated,
+   *           totalAmount,
+   *           status,
+   *           items }
+   *
+   * */
+
+  static async createInvoice({
+    invoiceId,
+    customerHandle,
+    invoiceDate,
+    totalAmount,
+    status,
+    items,
+  }) {
+
+
+    const data = {invoiceId, customerHandle, invoiceDate, totalAmount, status, items}
+
+    try {
+      const res = await this.request("invoice/", data, "post");
+      return res;
+    } catch (error) {
+      console.error("Error creating invoice:", error);
+      throw error;
     }
-
-
+  }
 }
+
+
 
 export default InviApi;
