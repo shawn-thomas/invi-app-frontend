@@ -43,7 +43,7 @@ function Sidebar({ logout, onSidebarItemClick }) {
               {isExpanded && <span>Inventory</span>}
             </li>
           </Link>
-          <Link className="sidebar-link" to="/dashboard/invoice">
+          <Link className="sidebar-link" to="/dashboard/invoices">
             <li>
               <RequestPageSharpIcon className="sidebar-li-icon" />
               {isExpanded && <span>Invoices</span>}
