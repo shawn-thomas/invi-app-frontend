@@ -1,3 +1,4 @@
+import '../styles/GenericList.css';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -13,9 +14,10 @@ import {
   TextField,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import * as XLSX from 'xlsx';
-import '../styles/GenericList.css';
+
 
 function InvoiceList({ listData, onFetchInvoices }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -27,13 +29,11 @@ function InvoiceList({ listData, onFetchInvoices }) {
     ? listData.filter((row) => {
       // Check if any value in the curr row contains the search query
       const rowContainsQuery = Object.values(row).some((value) => {
-
         if (typeof (value) === "string") {
           return value.toLowerCase().includes(searchQuery.toLowerCase());
         }
         return false;
       });
-
       return rowContainsQuery;
     })
     : [];
@@ -47,8 +47,17 @@ function InvoiceList({ listData, onFetchInvoices }) {
       day: 'numeric',
     }),
     total: row.totalAmount,
-    status: row.status
+    status: row.status,
+    items: row.items || [],
   }));
+
+  const [expandedRow, setExpandedRow] = useState(null);
+
+  const handleAccordionChange = (invoiceId) => {
+    setExpandedRow((prevExpandedRow) =>
+      prevExpandedRow === invoiceId ? null : invoiceId
+    );
+  };
 
   /** Pagination ------------------------------------------------------------ */
 
@@ -75,14 +84,16 @@ function InvoiceList({ listData, onFetchInvoices }) {
   return (
     <>
       <div className="dashboard-header">
-        <div className="dashboard-title"><h2>Invoices</h2></div>
+        <div className="dashboard-title">
+          <h2>Invoices</h2>
+        </div>
         <div className="dashboard-create-btn">
           <Link to="/dashboard/invoices/create">
             <Button
               variant="contained"
               color="primary"
               startIcon={<AddIcon />}
-              sx={{ marginBottom: 2, height: 36 }}
+              sx={{ marginBottom: 2, marginRight: 2, marginLeft: 2, height: 36 }}
             >
               Create
             </Button>
@@ -90,8 +101,9 @@ function InvoiceList({ listData, onFetchInvoices }) {
           <Button
             variant="outlined"
             startIcon={<FileDownloadIcon />}
-            sx={{ marginBottom: 2, marginLeft: 2 }}
-            onClick={handleExportToExcel}>
+            sx={{ marginBottom: 2 }}
+            onClick={handleExportToExcel}
+          >
             Export
           </Button>
         </div>
@@ -104,14 +116,15 @@ function InvoiceList({ listData, onFetchInvoices }) {
         sx={{ marginBottom: 2 }}
       />
       <TableContainer component={Paper} className="dashboard-table">
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table sx={{ minWidth: 650, border: '1px solid #e0e0e0' }} aria-label="simple table">
           <TableHead >
-            <TableRow>
+            <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
               <TableCell className="db-table-head">Invoice ID</TableCell>
               <TableCell className="db-table-head">Customer</TableCell>
               <TableCell className="db-table-head">Created</TableCell>
               <TableCell className="db-table-head">Total</TableCell>
               <TableCell className="db-table-head">Status</TableCell>
+              <TableCell className="db-table-head"></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -119,13 +132,51 @@ function InvoiceList({ listData, onFetchInvoices }) {
               ? formattedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               : formattedRows
             ).map((row) => (
-              <TableRow key={row.id}>
-                <TableCell className="db-table-cell">{row.id}</TableCell>
-                <TableCell className="db-table-cell">{row.customer}</TableCell>
-                <TableCell className="db-table-cell">{row.created}</TableCell>
-                <TableCell className="db-table-cell">{row.total}</TableCell>
-                <TableCell className="db-table-cell">{row.status}</TableCell>
-              </TableRow>
+              <React.Fragment key={row.id}>
+                <TableRow>
+                  <TableCell className="db-table-cell">{row.id}</TableCell>
+                  <TableCell className="db-table-cell">{row.customer}</TableCell>
+                  <TableCell className="db-table-cell">{row.created}</TableCell>
+                  <TableCell className="db-table-cell">${row.total}</TableCell>
+                  <TableCell className="db-table-cell">{row.status}</TableCell>
+                  <TableCell className="db-table-cell">
+                    <Button
+                      variant="outlined"
+                      onClick={() => handleAccordionChange(row.id)}
+                      startIcon={<ExpandMoreIcon />}
+                      sx={{ '&:hover': { backgroundColor: '#ececec' } }}
+                    >
+                      Details
+                    </Button>
+                  </TableCell>
+                </TableRow>
+                {expandedRow === row.id && (
+                  <TableRow sx={{ backgroundColor: '#f0f0f0' }}>
+                    <TableCell colSpan={6} sx={{ padding: 1 }}>
+                      <Table sx={{ backgroundColor: 'white', border: '1px solid #e0e0e0' }}>
+                        <TableHead>
+                          <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+                            <TableCell className="db-table-head">SKU(s)</TableCell>
+                            <TableCell className="db-table-head">Quantity</TableCell>
+                            <TableCell className="db-table-head">Unit Price</TableCell>
+                            <TableCell className="db-table-head">Line Subtotal</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {row.items.map((item) => (
+                            <TableRow key={item.itemId}>
+                              <TableCell className="db-table-cell">{item.sku}</TableCell>
+                              <TableCell className="db-table-cell">{item.quantity}</TableCell>
+                              <TableCell className="db-table-cell">${item.unitPrice}</TableCell>
+                              <TableCell className="db-table-cell">${(item.unitPrice * item.quantity).toFixed(2)}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </React.Fragment>
             ))}
           </TableBody>
         </Table>
@@ -139,8 +190,7 @@ function InvoiceList({ listData, onFetchInvoices }) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </TableContainer>
-      <div className="dashboard-export-btn">
-      </div>
+      <div className="dashboard-export-btn"></div>
     </>
   );
 }

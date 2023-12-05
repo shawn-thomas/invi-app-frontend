@@ -214,8 +214,8 @@ function CustomerList({ listData, onFetchCustomers }) {
         sx={{ marginBottom: 2 }}
       />
       <TableContainer component={Paper} className="dashboard-table">
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead >
+        <Table sx={{ minWidth: 650, border: '1px solid #e0e0e0' }} aria-label="simple table">
+          <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
             <TableRow>
               <TableCell className="db-table-head">Customer</TableCell>
               <TableCell className="db-table-head">Name</TableCell>

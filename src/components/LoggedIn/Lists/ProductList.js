@@ -116,9 +116,9 @@ function ProductList({ listData, onFetchProducts }) {
         sx={{ marginBottom: 2 }}
       />
       <TableContainer component={Paper} className="dashboard-table">
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table sx={{ minWidth: 650, border: '1px solid #e0e0e0' }} aria-label="simple table">
           <TableHead >
-            <TableRow>
+            <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
               <TableCell className="db-table-head">SKU</TableCell>
               <TableCell className="db-table-head">Name</TableCell>
               <TableCell className="db-table-head">Description</TableCell>
