@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Button,
   Paper,
@@ -76,15 +77,16 @@ function InvoiceList({ listData, onFetchInvoices }) {
       <div className="dashboard-header">
         <div className="dashboard-title"><h2>Invoices</h2></div>
         <div className="dashboard-create-btn">
-          {/* <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            sx={{ marginBottom: 2, height: 36 }}
-            onClick={handleAddModalOpen}
-          >
-            Create
-          </Button> */}
+          <Link to="/dashboard/invoices/create">
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              sx={{ marginBottom: 2, height: 36 }}
+            >
+              Create
+            </Button>
+          </Link>
           <Button
             variant="outlined"
             startIcon={<FileDownloadIcon />}
