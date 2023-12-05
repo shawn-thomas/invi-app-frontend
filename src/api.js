@@ -74,7 +74,7 @@ class InviApi {
   }
 
 
-  /** Retrieves all customers for specified user.
+  /** Retrieves all customers.
    *
    * Returns
    * [{ customerName, firstName, lastName, email, phone, address }, ...]
@@ -127,7 +127,7 @@ class InviApi {
   }
 
 
-  /** Retrieves all products for specified user.
+  /** Retrieves all products.
  *
  * Returns
  * { inventory:
@@ -213,7 +213,7 @@ class InviApi {
   }) {
 
 
-    const data = {invoiceId, customerHandle, invoiceDate, totalAmount, status, items}
+    const data = { invoiceId, customerHandle, invoiceDate, totalAmount, status, items };
 
     try {
       const res = await this.request("invoice/", data, "post");
@@ -222,6 +222,23 @@ class InviApi {
       console.error("Error creating invoice:", error);
       throw error;
     }
+  }
+
+  /** Retrieves all invoices.
+  *
+  *    * Returns [{ invoiceId,
+  *               customerHandle,
+  *               invoiceDate,
+  *               dateCreated,
+  *               totalAmount,
+  *               status,
+  *               items } ...]
+  */
+
+  static async getInvoices() {
+    let res = await this.request(`invoice/`);
+
+    return res;
   }
 }
 
