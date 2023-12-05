@@ -7,9 +7,11 @@ import SignupForm from './components/LoggedOut/LoginSignup/SignupForm';
 import Dashboard from './components/LoggedIn/Dashboard/Dashboard';
 import CustomerList from './components/LoggedIn/Lists/CustomerList';
 import ProductList from './components/LoggedIn/Lists/ProductList';
+import InvoiceList from "./components/LoggedIn/Lists/InvoiceList";
 import InvoiceForm from "./components/LoggedIn/Invoice/InvoiceForm";
 import useCustomers from './hooks/useCustomers';
 import useProducts from './hooks/useProducts';
+import useInvoices from './hooks/useInvoices';
 
 /** Define routes.
  *
@@ -31,6 +33,9 @@ function RoutesList({ signUp, login, logout }) {
 
   const { customers, handleFetchCustomers } = useCustomers(username || '');
   const { products, handleFetchProducts } = useProducts(username || '');
+  const { invoices, handleFetchInvoices } = useInvoices(username || '');
+
+  console.log(`Invoices for ${username} :`, invoices);
 
   useEffect(() => {
     if (currentUser) {
@@ -79,7 +84,16 @@ function RoutesList({ signUp, login, logout }) {
             }
           />
           <Route
-            path="/dashboard/invoice"
+            path="/dashboard/invoices"
+            element={
+              <InvoiceList
+                listData={invoices}
+                onFetchInvoices={handleFetchInvoices}
+              />
+            }
+          />
+          <Route
+            path="/dashboard/invoices/create"
             element={
               <InvoiceForm
                 user={currentUser}
