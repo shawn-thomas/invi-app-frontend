@@ -33,9 +33,9 @@ function RoutesList({ signUp, login, logout }) {
 
   const { customers, handleFetchCustomers } = useCustomers(username || '');
   const { products, handleFetchProducts } = useProducts(username || '');
-  const { invoices, handleFetchInvoices } = useInvoices(username || '');
+  const { invoices, invoiceNbr, handleFetchInvoices } = useInvoices(username || '');
 
-  console.log(`Invoices for ${username} :`, invoices);
+  console.log(`Invoices for ${username} :`, invoices, invoiceNbr);
 
   useEffect(() => {
     if (currentUser) {
@@ -99,7 +99,9 @@ function RoutesList({ signUp, login, logout }) {
                 user={currentUser}
                 customers={customers}
                 products={products}
-                onFetchproducts={handleFetchProducts}
+                currentInvoiceNbr={invoiceNbr}
+                onFetchInvoices={handleFetchInvoices}
+                onFetchProducts={handleFetchProducts}
                 onFetchCustomers={handleFetchCustomers}
               />
             }

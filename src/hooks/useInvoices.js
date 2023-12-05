@@ -3,6 +3,7 @@ import InviApi from '../api';
 
 function useInvoices(user) {
   const [invoices, setInvoices] = useState([]);
+  const [invoiceNbr, setInvoiceNbr] = useState(null);
   const [triggerFetch, setTriggerFetch] = useState(false);
 
   /** Fetch all invoices data when the component mounts. This effect checks if
@@ -17,6 +18,7 @@ function useInvoices(user) {
         try {
           const invoicesData = await InviApi.getInvoices();
           setInvoices(invoicesData.invoices);
+          setInvoiceNbr(invoicesData.invoices.length + 1);
         } catch (err) {
           console.warn(err);
         }
@@ -33,7 +35,7 @@ function useInvoices(user) {
     setTriggerFetch((prev) => !prev);
   };
 
-  return { invoices, handleFetchInvoices };
+  return { invoices, invoiceNbr, handleFetchInvoices };
 }
 
 export default useInvoices;

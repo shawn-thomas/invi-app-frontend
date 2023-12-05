@@ -29,14 +29,17 @@ const initialInvoice = {
   items: [],
 };
 
-function InvoiceForm({ user, customers, products, onFetchProducts, onFetchCustomers }) {
+function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvoices, onFetchProducts, onFetchCustomers }) {
   const [invoice, setInvoice] = useState(initialInvoice);
-  const [invoiceNumber, setInvoiceNumber] = useState(null);
   const [invoiceRecipient, setInvoiceRecipient] = useState(null);
   const [invoiceItems, setInvoiceItems] = useState([]);
   const [invoiceTotal, setInvoiceTotal] = useState(null);
   const [itemsMap, setItemsMap] = useState(null);
   const [successAddMessage, setSuccessAddMessage] = useState(null);
+
+  function formatInvoiceNumber(number) {
+    return `${new Date().getFullYear()}-${number}`;
+  }
 
 
   useEffect(() => {
@@ -58,12 +61,6 @@ function InvoiceForm({ user, customers, products, onFetchProducts, onFetchCustom
     }
   }, [invoiceItems]);
 
-  function handleInvoiceNumberChange(evt) {
-    setInvoiceNumber((prevInvoiceNumber) => {
-      const newInvoiceNumber = evt.target.value;
-      return +newInvoiceNumber;
-    });
-  }
 
   function handleInputChange(section, field, value) {
     setInvoice((prevInvoice) => ({
@@ -101,10 +98,14 @@ function InvoiceForm({ user, customers, products, onFetchProducts, onFetchCustom
 
   const handleCreateInvoice = async () => {
     try {
+
+      const currentDate = new Date();
+      const formattedDate = currentDate.toISOString().substring(0, 10);
+
       const requestData = {
-        invoiceId: invoiceNumber,
+        invoiceId: formatInvoiceNumber(currentInvoiceNbr),
         customerHandle: invoiceRecipient.handle,
-        invoiceDate: '2023-03-01',
+        invoiceDate: formattedDate,
         totalAmount: invoiceTotal,
         status: 'pending',
         items: itemsMap,
@@ -112,7 +113,8 @@ function InvoiceForm({ user, customers, products, onFetchProducts, onFetchCustom
 
       const createdInvoice = await InviApi.createInvoice(requestData);
 
-      setSuccessAddMessage(`Invoice ${invoiceNumber} created successfully!`);
+      setSuccessAddMessage(`Invoice ${currentInvoiceNbr} created successfully!`);
+      onFetchInvoices()
 
       console.log('Invoice created successfully:', createdInvoice);
 
@@ -143,14 +145,7 @@ function InvoiceForm({ user, customers, products, onFetchProducts, onFetchCustom
         <div className='invoice-header'>
           <div className='invoice-number'>
             <label htmlFor="invoice-number">
-              Invoice #
-              <input
-                type="text"
-                id="invoice-number"
-                style={{ marginLeft: 20 }}
-                onChange={handleInvoiceNumberChange}
-                required
-              />
+              Invoice # {formatInvoiceNumber(currentInvoiceNbr)}
             </label>
           </div>
 
