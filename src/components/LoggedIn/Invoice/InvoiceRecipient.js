@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Grid,
   Autocomplete,
@@ -12,8 +12,9 @@ import AddCustomer from '../modals/AddCustomer';
 function InvoiceRecipient({
   customers,
   onInputChange,
-  onAddInvoiceRecipient,
-  onDeleteInvoiceRecipient,
+  addRecipient,
+  removeRecipient,
+  formSubmitted
 }) {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
@@ -30,11 +31,21 @@ function InvoiceRecipient({
     updateRecipient(recipient);
   }
 
+  // Reset the recipient state when the form is submitted
+  useEffect(() => {
+    if (formSubmitted) {
+      setSelectedCustomer(null);
+      const emptyRecipient = { name: '', address: '', email: '' };
+      updateRecipient(emptyRecipient);
+      removeRecipient();
+    }
+  }, [formSubmitted, removeRecipient]);
+
   function handleClearRecipient() {
     setSelectedCustomer(null);
     const emptyRecipient = { name: '', address: '', email: '' };
     updateRecipient(emptyRecipient);
-    onDeleteInvoiceRecipient();
+    removeRecipient();
   }
 
   function updateRecipient(recipient) {
@@ -42,9 +53,8 @@ function InvoiceRecipient({
     onInputChange('recipient', 'name', recipient.name);
     onInputChange('recipient', 'address', recipient.address);
     onInputChange('recipient', 'email', recipient.email);
-
-    onAddInvoiceRecipient(recipient);
   }
+
 
   return (
     <Grid container spacing={2}>

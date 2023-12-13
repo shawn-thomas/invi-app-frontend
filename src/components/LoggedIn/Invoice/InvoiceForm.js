@@ -15,27 +15,23 @@ import InvoiceTotal from './InvoiceTotal';
 import InviApi from '../../../api';
 import '../styles/InvoiceForm.css';
 
-const initialInvoice = {
-  sender: {
-    name: '',
-    address: '',
-    email: '',
-  },
-  recipient: {
-    name: '',
-    address: '',
-    email: '',
-  },
-  items: [],
-};
 
 function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvoices, onFetchProducts, onFetchCustomers }) {
-  const [invoice, setInvoice] = useState(initialInvoice);
-  const [invoiceRecipient, setInvoiceRecipient] = useState(null);
+  const [invoice, setInvoice] = useState({
+    recipient: {
+      handle: '',
+      name: '',
+      address: '',
+      email: '',
+    },
+    items: [],
+  });
   const [invoiceItems, setInvoiceItems] = useState([]);
   const [invoiceTotal, setInvoiceTotal] = useState(null);
   const [itemsMap, setItemsMap] = useState(null);
   const [successAddMessage, setSuccessAddMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   function formatInvoiceNumber(number) {
     return `${new Date().getFullYear()}-${number}`;
@@ -70,7 +66,7 @@ function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvo
         [field]: value,
       },
     }));
-  };
+  }
 
   function handleAddInvoiceItem(item) {
     setInvoiceItems((prevInvoiceItems) => {
@@ -84,27 +80,49 @@ function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvo
     setInvoiceItems(updatedInvoiceItems);
   };
 
-  function handleAddInvoiceRecipient(recipient) {
-    setInvoiceRecipient(recipient);
-
-    console.log('Invoice recipient added:', recipient);
+  const handleAddRecipient = (selectedRecipient) => {
+    setInvoice({
+      ...invoice,
+      recipient: selectedRecipient,
+    });
   };
 
-  function handleDeleteInvoiceRecipient() {
-    setInvoiceRecipient(null);
-    console.log('recipient removed: ', invoiceRecipient);
+  const handleRemoveRecipient = () => {
+    setInvoice({
+      ...invoice,
+      recipient: null,
+    });
+  };
+
+  const resetForm = () => {
+    setInvoice({
+      recipient: {
+        handle: '',
+        name: '',
+        address: '',
+        email: '',
+      },
+      items: [],
+    });
+    setInvoiceItems([]);
+    setInvoiceTotal(null);
+    setItemsMap(null);
   };
 
 
   const handleCreateInvoice = async () => {
     try {
+      if (!invoice.recipient) {
+        setErrorMessage('Recipient information is incomplete. Please fill in all required fields.');
+        return;
+      }
 
       const currentDate = new Date();
       const formattedDate = currentDate.toISOString().substring(0, 10);
 
       const requestData = {
         invoiceId: formatInvoiceNumber(currentInvoiceNbr),
-        customerHandle: invoiceRecipient.handle,
+        customerHandle: invoice.recipient.handle,
         invoiceDate: formattedDate,
         totalAmount: invoiceTotal,
         status: 'pending',
@@ -114,31 +132,38 @@ function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvo
       const createdInvoice = await InviApi.createInvoice(requestData);
 
       setSuccessAddMessage(`Invoice ${currentInvoiceNbr} created successfully!`);
-      onFetchInvoices()
+      onFetchInvoices();
+      resetForm();
+      setFormSubmitted(true);
 
       console.log('Invoice created successfully:', createdInvoice);
-
     } catch (error) {
       console.error('Error creating invoice:', error);
+      setErrorMessage('Error creating invoice. Please try again.');
     }
   };
-
   return (
     <Container maxWidth="lg" style={{ margin: '20px auto', padding: '20px' }}>
       <Snackbar
-        open={!!successAddMessage}
+        open={!!successAddMessage || !!errorMessage}
         autoHideDuration={6000}
-        onClose={() => setSuccessAddMessage(null)}
+        onClose={() => {
+          setSuccessAddMessage(null);
+          setErrorMessage(null);
+          setFormSubmitted(false);
+        }}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <MuiAlert
           elevation={6}
-          variant="filled"
-          severity="success"
-          onClose={() => setSuccessAddMessage(null)}
-          className="success-add-alert"
+          variant={'filled'}
+          severity={successAddMessage ? 'success' : 'warning'}
+          onClose={() => {
+            setSuccessAddMessage(null);
+            setErrorMessage(null);
+          }}
         >
-          {successAddMessage}
+          {successAddMessage || errorMessage}
         </MuiAlert>
       </Snackbar>
       <Paper elevation={3} style={{ padding: '20px', marginBottom: '20px' }}>
@@ -165,8 +190,9 @@ function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvo
               <InvoiceRecipient
                 customers={customers}
                 onInputChange={handleInputChange}
-                onAddInvoiceRecipient={handleAddInvoiceRecipient}
-                onDeleteInvoiceRecipient={handleDeleteInvoiceRecipient}
+                addRecipient={handleAddRecipient}
+                removeRecipient={handleRemoveRecipient}
+                formSubmitted={formSubmitted}
               />
             </Grid>
           </Grid>
