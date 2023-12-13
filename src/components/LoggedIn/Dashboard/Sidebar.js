@@ -1,5 +1,5 @@
-import './styles/Sidebar.css';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useNavigate, Link } from "react-router-dom";
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleSharpIcon from '@mui/icons-material/PeopleSharp';
 import QrCodeSharpIcon from '@mui/icons-material/QrCodeSharp';
@@ -8,7 +8,8 @@ import InventorySharpIcon from '@mui/icons-material/InventorySharp';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import LogoutSharpIcon from '@mui/icons-material/LogoutSharp';
-import { useNavigate, Link } from "react-router-dom";
+import '../styles/Sidebar.css';
+
 
 
 function Sidebar({ logout, onSidebarItemClick }) {
@@ -24,38 +25,30 @@ function Sidebar({ logout, onSidebarItemClick }) {
 
   return (
     <div className={`sidebar ${isExpanded ? 'expanded' : 'collapsed'}`}>
-      {/* <div className="sidebar-top" onClick={() => setExpanded(!isExpanded)}>
-        <span className="sidebar-logo">
-          <img
-            src="https://images.ctfassets.net/spoqsaf9291f/3352a7f0-cb1a-49ba-b5d1-26df3b522fa2/3652cfd770ca15516defe196a357a6c4/3352a7f0-cb1a-49ba-b5d1-26df3b522fa2.png"
-            alt="SendOwl"
-            className="sidebar-logo-icon"
-          />
-          {isExpanded && <h2>Invi</h2>}
-        </span>
-      </div> */}
       <div className={`sidebar-center ${isExpanded ? '' : 'collapsed'}`}>
         <ul>
           <li>
             <DashboardIcon className="sidebar-li-icon" />
             {isExpanded && <span>Dashboard</span>}
           </li>
-          <Link to="/dashboard/customers">
-          <li>
-            <PeopleSharpIcon className="sidebar-li-icon" />
-            {isExpanded && <span>Customers</span>}
-          </li>
+          <Link className="sidebar-link" to="/dashboard/customers">
+            <li>
+              <PeopleSharpIcon className="sidebar-li-icon" />
+              {isExpanded && <span>Customers</span>}
+            </li>
           </Link>
-          <Link to="/dashboard/inventory">
-          <li>
-            <QrCodeSharpIcon className="sidebar-li-icon" />
-            {isExpanded && <span>Inventory</span>}
-          </li>
+          <Link className="sidebar-link" to="/dashboard/inventory">
+            <li>
+              <QrCodeSharpIcon className="sidebar-li-icon" />
+              {isExpanded && <span>Inventory</span>}
+            </li>
           </Link>
-          <li>
-            <RequestPageSharpIcon className="sidebar-li-icon" />
-            {isExpanded && <span>Invoices</span>}
-          </li>
+          <Link className="sidebar-link" to="/dashboard/invoices">
+            <li>
+              <RequestPageSharpIcon className="sidebar-li-icon" />
+              {isExpanded && <span>Invoices</span>}
+            </li>
+          </Link>
           <li>
             <InventorySharpIcon className="sidebar-li-icon" />
             {isExpanded && <span>Audit</span>}

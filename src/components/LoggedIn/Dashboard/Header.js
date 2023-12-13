@@ -1,7 +1,7 @@
-import "./styles/Header.css";
+import "../styles/Header.css";
 import SearchSharpIcon from '@mui/icons-material/SearchSharp';
 import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
-import inviLogo from '../../images/InviLogo.svg'
+import inviLogo from '../../../images/InviLogo.svg'
 import { NavLink } from "react-router-dom";
 
 function Header() {

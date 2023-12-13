@@ -1,31 +1,31 @@
 import React, { useState } from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import TextField from '@mui/material/TextField';
-import TablePagination from '@mui/material/TablePagination';
-import Button from '@mui/material/Button';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import {
+  Button,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TextField,
+} from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import * as XLSX from 'xlsx';
-import InviApi from '../../api';
-import AddProduct from './modals/AddProduct';
-import './styles/GenericList.css';
+import InviApi from '../../../api';
+import AddProduct from '../modals/AddProduct';
+import '../styles/GenericList.css';
+
 
 function ProductList({ listData, onFetchProducts }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isAddModalOpen, setAddModalOpen] = useState(false);
-  // const [selectedProductData, setSelectedProductData] = useState(null);
-  // const [updatedProductData, setUpdatedProductData] = useState(null);
-  // const [formErrors, setFormErrors] = useState([]);
 
   // Filter list based on the search query
   const filteredRows = (Array.isArray(listData) && listData.length > 0)
@@ -84,7 +84,7 @@ function ProductList({ listData, onFetchProducts }) {
     XLSX.writeFile(wb, 'inventory.xlsx');
   };
 
-
+  console.log("products", listData)
   return (
     <>
       <div className="dashboard-header">
@@ -94,10 +94,10 @@ function ProductList({ listData, onFetchProducts }) {
             variant="contained"
             color="primary"
             startIcon={<AddIcon />}
-            sx={{ marginBottom: 2 }}
+            sx={{ marginBottom: 2, height: 36 }}
             onClick={handleAddModalOpen}
           >
-            Add new
+            Create
           </Button>
           <Button
             variant="outlined"
@@ -116,9 +116,9 @@ function ProductList({ listData, onFetchProducts }) {
         sx={{ marginBottom: 2 }}
       />
       <TableContainer component={Paper} className="dashboard-table">
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table sx={{ minWidth: 650, border: '1px solid #e0e0e0' }} aria-label="simple table">
           <TableHead >
-            <TableRow>
+            <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
               <TableCell className="db-table-head">SKU</TableCell>
               <TableCell className="db-table-head">Name</TableCell>
               <TableCell className="db-table-head">Description</TableCell>
@@ -137,7 +137,7 @@ function ProductList({ listData, onFetchProducts }) {
                 <TableCell className="db-table-cell">{row.name}</TableCell>
                 <TableCell className="db-table-cell">{row.description}</TableCell>
                 <TableCell className="db-table-cell">{row.price}</TableCell>
-                <TableCell className="db-table-cell">{row.quantity}</TableCell>
+                <TableCell className="db-table-cell">{row.stock}</TableCell>
                 <TableCell className="db-table-cell">
                   <EditOutlinedIcon
                     style={{

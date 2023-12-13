@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField
+} from '@mui/material';
 import InviApi from '../../../api';
 import Alert from '../../../common/Alert';
 
@@ -17,8 +19,6 @@ function AddProduct({ isOpen, onClose, onFetchCustomer }) {
     price: '',
     quantityAvailable: '',
   });
-
-  console.log(newProductData)
 
   const [validationErrors, setValidationErrors] = useState({});
   const [formErrors, setFormErrors] = useState([]);
@@ -66,7 +66,21 @@ function AddProduct({ isOpen, onClose, onFetchCustomer }) {
         return;
       }
 
-      await InviApi.createProduct(newProductData);
+      const price = parseFloat(newProductData.price);
+      const quantityAvailable = parseInt(newProductData.quantityAvailable);
+
+      if (isNaN(price) || isNaN(quantityAvailable)) {
+        setFormErrors(['Price and Quantity must be valid numbers']);
+        return;
+      }
+
+      const updatedData = {
+        ...newProductData,
+        price,
+        quantityAvailable,
+      };
+
+      await InviApi.createProduct(updatedData);
 
       setNewProductData({
         sku: '',
@@ -79,14 +93,11 @@ function AddProduct({ isOpen, onClose, onFetchCustomer }) {
       setFormErrors([]);
       onFetchCustomer();
       onClose();
-
     } catch (error) {
-      console.error('Error adding customer:', error.message);
-      setFormErrors(error);
+      setFormErrors([error.message]);
     }
-  };
-
-
+  }
+  
   /** Closes the dialog and resets the form. */
   function handleClose() {
     setNewProductData({
