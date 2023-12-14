@@ -20,7 +20,6 @@ function InvoiceTotal({ invoiceItems }) {
     const subtotal = calculateSubtotal(items);
     const tax = calculateTax(subtotal);
     const totalAfterTax = subtotal + tax;
-    console.log("tax", tax)
     return totalAfterTax;
   }
 

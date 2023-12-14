@@ -25,9 +25,8 @@ function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvo
       email: '',
     },
     items: [],
+    total: null,
   });
-  const [invoiceItems, setInvoiceItems] = useState([]);
-  const [invoiceTotal, setInvoiceTotal] = useState(null);
   const [itemsMap, setItemsMap] = useState(null);
   const [successAddMessage, setSuccessAddMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -39,8 +38,8 @@ function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvo
 
 
   useEffect(() => {
-    if (invoiceItems.length > 0) {
-      const itemsMap = invoiceItems.map((item) => {
+    if (invoice.items.length > 0) {
+      const itemsMap = invoice.items.map((item) => {
         return {
           sku: item.sku,
           quantity: item.quantity,
@@ -49,13 +48,16 @@ function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvo
       });
 
       let total = 0;
-      for (let item of invoiceItems) {
+      for (let item of invoice.items) {
         total += item.total;
       }
-      setInvoiceTotal(total);
+      setInvoice((prevInvoice) => ({
+        ...prevInvoice,
+        total: +total,
+      }));
       setItemsMap(itemsMap);
     }
-  }, [invoiceItems]);
+  }, [invoice.items]);
 
 
   function handleInputChange(section, field, value) {
@@ -68,17 +70,23 @@ function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvo
     }));
   }
 
+  /** Invoice Items ------------------------------------------------------------- */
+
   function handleAddInvoiceItem(item) {
-    setInvoiceItems((prevInvoiceItems) => {
-      const updatedInvoiceItems = [...prevInvoiceItems, item];
-      return updatedInvoiceItems;
-    });
+    setInvoice((prevInvoice) => ({
+      ...prevInvoice,
+      items: [...prevInvoice.items, item],
+    }));
   };
 
   function handleDeleteInvoiceItem(item) {
-    const updatedInvoiceItems = invoiceItems.filter((invoiceItem) => invoiceItem !== item);
-    setInvoiceItems(updatedInvoiceItems);
+    setInvoice((prevInvoice) => ({
+      ...prevInvoice,
+      items: prevInvoice.items.filter((invoiceItem) => invoiceItem !== item),
+    }));
   };
+
+  /** Recipient ------------------------------------------------------------------*/
 
   const handleAddRecipient = (selectedRecipient) => {
     setInvoice({
@@ -94,6 +102,8 @@ function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvo
     });
   };
 
+  /** Form Submit ------------------------------------------------------------------*/
+
   const resetForm = () => {
     setInvoice({
       recipient: {
@@ -104,17 +114,24 @@ function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvo
       },
       items: [],
     });
-    setInvoiceItems([]);
-    setInvoiceTotal(null);
     setItemsMap(null);
   };
 
 
   const handleCreateInvoice = async () => {
     try {
+      if (!invoice.recipient && itemsMap === null) {
+        setErrorMessage('Please provide recipient information and at least one invoice item.');
+        return;
+      }
+
       if (!invoice.recipient) {
         setErrorMessage('Recipient information is incomplete. Please fill in all required fields.');
         return;
+      }
+
+      if (itemsMap === null){
+        setErrorMessage('Please provide at least one invoice item.')
       }
 
       const currentDate = new Date();
@@ -124,14 +141,14 @@ function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvo
         invoiceId: formatInvoiceNumber(currentInvoiceNbr),
         customerHandle: invoice.recipient.handle,
         invoiceDate: formattedDate,
-        totalAmount: invoiceTotal,
-        status: 'pending',
         items: itemsMap,
+        totalAmount: +invoice.total,
+        status: 'pending',
       };
 
       const createdInvoice = await InviApi.createInvoice(requestData);
 
-      setSuccessAddMessage(`Invoice ${currentInvoiceNbr} created successfully!`);
+      setSuccessAddMessage(`Invoice ${formatInvoiceNumber(currentInvoiceNbr)} created successfully!`);
       onFetchInvoices();
       resetForm();
       setFormSubmitted(true);
@@ -146,7 +163,6 @@ function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvo
     <Container maxWidth="lg" style={{ margin: '20px auto', padding: '20px' }}>
       <Snackbar
         open={!!successAddMessage || !!errorMessage}
-        autoHideDuration={6000}
         onClose={() => {
           setSuccessAddMessage(null);
           setErrorMessage(null);
@@ -206,12 +222,13 @@ function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvo
           products={products}
           onAddInvoiceItem={handleAddInvoiceItem}
           onDeleteInvoiceItem={handleDeleteInvoiceItem}
+          formSubmitted={formSubmitted}
         />
 
         {/* Total */}
         <div className='invoice-total'>
           <InvoiceTotal
-            invoiceItems={invoiceItems}
+            invoiceItems={invoice.items}
           />
         </div>
 

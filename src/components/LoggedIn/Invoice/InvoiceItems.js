@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -10,9 +10,17 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddLineItem from './AddLineItem';
 
-const InvoiceItems = ({ products, onAddInvoiceItem, onDeleteInvoiceItem }) => {
+const InvoiceItems = ({ products, onAddInvoiceItem, onDeleteInvoiceItem, formSubmitted }) => {
   const [tableData, setTableData] = useState([]);
   const [addedSKUs, setAddedSKUs] = useState([]);
+
+    // Reset the table state when the form is submitted
+    useEffect(() => {
+      if (formSubmitted) {
+        setTableData([]);
+        setAddedSKUs([]);
+      }
+    }, [formSubmitted, onDeleteInvoiceItem]);
 
   function addLineItem(selectedSKU, quantity) {
     const productDetails = products.find((product) => product.sku === selectedSKU);
