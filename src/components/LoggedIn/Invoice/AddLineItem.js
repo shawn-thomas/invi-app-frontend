@@ -6,10 +6,11 @@ import {
 } from '@mui/material'
 import AddProduct from '../modals/AddProduct';
 
-function AddLineItem({ products, onAddLineItem, addedSKUs }) {
+function AddLineItem({ products, onAddLineItem, addedSKUs, onFetchProducts }) {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [quantity, setQuantity] = useState('');
   const [error, setError] = useState('');
+  const [isAddProductModalOpen, setAddProductModalOpen] = useState(false);
 
   function handleProductChange(event, newValue) {
     setSelectedProduct(newValue);
@@ -52,6 +53,9 @@ function AddLineItem({ products, onAddLineItem, addedSKUs }) {
     }
   }
 
+  const openAddProductModal = () => setAddProductModalOpen(true);
+  const closeAddProductModal = () => setAddProductModalOpen(false);
+
   return (
     <div className='lineitem-container'>
       {/* Autocomplete for selecting products */}
@@ -62,8 +66,17 @@ function AddLineItem({ products, onAddLineItem, addedSKUs }) {
         value={selectedProduct}
         onChange={handleProductChange}
         renderInput={(params) => <TextField {...params} label="Search SKU" />}
+        noOptionsText={
+          <Button
+            size="small"
+            variant="outlined"
+            onClick={openAddProductModal}
+            style={{ marginLeft: 10 }}
+          >
+            Add Product
+          </Button>
+        }
       />
-
       {/* Input field for entering quantity */}
       <TextField
         size='small'
@@ -87,6 +100,11 @@ function AddLineItem({ products, onAddLineItem, addedSKUs }) {
       >
         Add
       </Button>
+      <AddProduct
+        isOpen={isAddProductModalOpen}
+        onClose={closeAddProductModal}
+        onFetchProduct={onFetchProducts}
+      />
     </div>
   );
 }

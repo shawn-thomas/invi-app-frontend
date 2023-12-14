@@ -11,7 +11,7 @@ import InviApi from '../../../api';
 import Alert from '../../../common/Alert';
 
 
-function AddProduct({ isOpen, onClose, onFetchCustomer }) {
+function AddProduct({ isOpen, onClose, onFetchProduct }) {
   const [newProductData, setNewProductData] = useState({
     sku: '',
     productName: '',
@@ -91,13 +91,13 @@ function AddProduct({ isOpen, onClose, onFetchCustomer }) {
       });
 
       setFormErrors([]);
-      onFetchCustomer();
+      onFetchProduct();
       onClose();
     } catch (error) {
       setFormErrors([error.message]);
     }
   }
-  
+
   /** Closes the dialog and resets the form. */
   function handleClose() {
     setNewProductData({

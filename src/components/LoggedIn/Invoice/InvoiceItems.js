@@ -10,7 +10,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddLineItem from './AddLineItem';
 
-const InvoiceItems = ({ products, onAddInvoiceItem, onDeleteInvoiceItem, formSubmitted }) => {
+const InvoiceItems = ({ products, onAddInvoiceItem, onDeleteInvoiceItem, onFetchProducts, formSubmitted }) => {
   const [tableData, setTableData] = useState([]);
   const [addedSKUs, setAddedSKUs] = useState([]);
 
@@ -58,7 +58,12 @@ const InvoiceItems = ({ products, onAddInvoiceItem, onDeleteInvoiceItem, formSub
 
   return (
     <div className='table-container'>
-      <AddLineItem products={products} onAddLineItem={addLineItem} addedSKUs={addedSKUs} />
+      <AddLineItem
+        products={products}
+        onAddLineItem={addLineItem}
+        addedSKUs={addedSKUs}
+        onFetchProducts={onFetchProducts}
+        />
       <Table>
         <TableHead>
           <TableRow>

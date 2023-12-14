@@ -224,6 +224,7 @@ function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvo
           onAddInvoiceItem={handleAddInvoiceItem}
           onDeleteInvoiceItem={handleDeleteInvoiceItem}
           formSubmitted={formSubmitted}
+          onFetchProducts={onFetchProducts}
         />
 
         {/* Total */}
