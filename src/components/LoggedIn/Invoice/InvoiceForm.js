@@ -209,6 +209,7 @@ function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvo
                 addRecipient={handleAddRecipient}
                 removeRecipient={handleRemoveRecipient}
                 formSubmitted={formSubmitted}
+                onFetchCustomers={onFetchCustomers}
               />
             </Grid>
           </Grid>

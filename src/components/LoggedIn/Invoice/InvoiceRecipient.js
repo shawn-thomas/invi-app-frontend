@@ -12,18 +12,19 @@ import AddCustomer from '../modals/AddCustomer';
 function InvoiceRecipient({
   customers,
   onInputChange,
-  addRecipient,
   removeRecipient,
-  formSubmitted
+  formSubmitted,
+  onFetchCustomers,
 }) {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [isAddCustomerModalOpen, setAddCustomerModalOpen] = useState(false);
 
   function handleCustomerSelect(event, value) {
     setSelectedCustomer(value);
 
     const recipient = {
       handle: value ? value.handle : '',
-      name : value ? value.customerName : '',
+      name: value ? value.customerName : '',
       address: '',
       email: value ? value.email : '',
     };
@@ -47,6 +48,14 @@ function InvoiceRecipient({
     updateRecipient(emptyRecipient);
     removeRecipient();
   }
+
+  const openAddCustomerModal = () => setAddCustomerModalOpen(true);
+  const closeAddCustomerModal = () => setAddCustomerModalOpen(false);
+  function handleAddCustomerSuccess(newCustomer) {
+    setSelectedCustomer(newCustomer?.customer);
+    onFetchCustomers();
+    closeAddCustomerModal();
+  };
 
   function updateRecipient(recipient) {
     onInputChange('recipient', 'handle', recipient.handle);
@@ -83,9 +92,38 @@ function InvoiceRecipient({
             renderInput={(params) => (
               <TextField {...params} label="Select Customer" variant="outlined" fullWidth />
             )}
+            noOptionsText={
+              <Button
+                size="small"
+                variant="outlined"
+                onClick={openAddCustomerModal}
+                style={{ marginTop: 10 }}
+              >
+                Add Customer
+              </Button>
+            }
+            onInputChange={(event, newInputValue) => {
+              onInputChange('recipient', 'handle', newInputValue);
+            }}
+            isOptionEqualToValue={(option, value) => option.customerName === value.customerName}
+            renderOption={(props, option, { inputValue }) => (
+              <li {...props}>
+                {option.customerName}
+                {inputValue === option.customerName && (
+                  <Button onClick={openAddCustomerModal}>Add</Button>
+                )}
+              </li>
+            )}
           />
         )}
       </Grid>
+      <AddCustomer
+        isOpen={isAddCustomerModalOpen}
+        onClose={closeAddCustomerModal}
+        onSuccess={handleAddCustomerSuccess}
+        onFetchCustomer={onFetchCustomers}
+
+      />
     </Grid>
   );
 }

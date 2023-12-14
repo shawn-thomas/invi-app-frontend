@@ -62,7 +62,7 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer, onSuccess }) {
         return;
       }
 
-      await InviApi.createCustomer(newCustomerData);
+      const createdCustomer = await InviApi.createCustomer(newCustomerData);
 
       setNewCustomerData({
         customerName: '',
@@ -73,7 +73,7 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer, onSuccess }) {
         address: '',
       });
 
-      onSuccess();
+      onSuccess(createdCustomer);
       setFormErrors([]);
       onFetchCustomer();
       onClose();
