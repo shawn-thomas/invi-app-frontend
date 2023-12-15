@@ -166,7 +166,7 @@ function ProductList({ listData, onFetchProducts }) {
       <AddProduct
         isOpen={isAddModalOpen}
         onClose={handleAddModalClose}
-        onFetchCustomer={onFetchProducts}
+        onFetchProduct={onFetchProducts}
       />
       <div className="dashboard-export-btn">
       </div>
