@@ -22,7 +22,7 @@ This is the React frontend for Invi. Combined with <a href="https://github.com/s
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/shawn-thomas/invi-app-backend.git
+   git clone https://github.com/shawn-thomas/invi-app-frontend.git
    ```
 2. Install NPM packages
    ```sh
