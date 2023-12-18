@@ -49,10 +49,12 @@ function Sidebar({ logout, onSidebarItemClick }) {
               {isExpanded && <span>Invoices</span>}
             </li>
           </Link>
+          <Link className="sidebar-link" to="/dashboard/audit">
           <li>
             <InventorySharpIcon className="sidebar-li-icon" />
             {isExpanded && <span>Audit</span>}
           </li>
+          </Link>
           <div onClick={handleLogout} className="sidebar-logout">
             <li>
               <LogoutSharpIcon className="sidebar-li-icon" />
