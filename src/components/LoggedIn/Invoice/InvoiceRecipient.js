@@ -52,8 +52,17 @@ function InvoiceRecipient({
   const openAddCustomerModal = () => setAddCustomerModalOpen(true);
   const closeAddCustomerModal = () => setAddCustomerModalOpen(false);
   function handleAddCustomerSuccess(newCustomer) {
-    setSelectedCustomer(newCustomer?.customer);
+    const customerData = newCustomer?.customer
+    setSelectedCustomer(customerData);
     onFetchCustomers();
+    const recipient = {
+      handle: customerData ? customerData.handle : '',
+      name: customerData ? customerData.customerName : '',
+      address: '',
+      email: customerData ? customerData.email : '',
+    };
+
+    updateRecipient(recipient);
     closeAddCustomerModal();
   };
 
