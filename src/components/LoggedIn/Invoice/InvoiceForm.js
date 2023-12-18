@@ -143,7 +143,7 @@ function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvo
         invoiceDate: formattedDate,
         items: itemsMap,
         totalAmount: +invoice.total,
-        status: 'pending',
+        status: 'Pending',
       };
 
       const createdInvoice = await InviApi.createInvoice(requestData);
