@@ -8,10 +8,12 @@ import Dashboard from './components/LoggedIn/Dashboard/Dashboard';
 import CustomerList from './components/LoggedIn/Lists/CustomerList';
 import ProductList from './components/LoggedIn/Lists/ProductList';
 import InvoiceList from "./components/LoggedIn/Lists/InvoiceList";
+import AuditList from "./components/LoggedIn/Lists/AuditList"
 import InvoiceForm from "./components/LoggedIn/Invoice/InvoiceForm";
 import useCustomers from './hooks/useCustomers';
 import useProducts from './hooks/useProducts';
 import useInvoices from './hooks/useInvoices';
+import useAudits from "./hooks/useAudits";
 
 /** Define routes.
  *
@@ -34,18 +36,19 @@ function RoutesList({ signUp, login, logout }) {
   const { customers, handleFetchCustomers } = useCustomers(username || '');
   const { products, handleFetchProducts } = useProducts(username || '');
   const { invoices, invoiceNbr, handleFetchInvoices } = useInvoices(username || '');
+  const { auditRecords } = useAudits(username || '');
 
-  console.log(`Invoices for ${username} :`, invoices, invoiceNbr);
+  console.log(`Audit records for ${username} :`, auditRecords);
 
-  useEffect(() => {
-    if (currentUser) {
-      setLoading(false);
-    }
-  }, [currentUser]);
+  // useEffect(() => {
+  //   if (currentUser) {
+  //     setLoading(false);
+  //   }
+  // }, [currentUser]);
 
-  if (loading) {
-    return <Dashboard logout={logout} />;
-  }
+  // if (loading) {
+  //   return <Dashboard logout={logout} />;
+  // }
 
   console.log('Navigating to /' + (currentUser ? 'dashboard' : ''));
 
@@ -104,6 +107,13 @@ function RoutesList({ signUp, login, logout }) {
                 onFetchProducts={handleFetchProducts}
                 onFetchCustomers={handleFetchCustomers}
               />
+            }
+          />
+          <Route
+            path="/dashboard/audit"
+            element={
+              <AuditList
+                listData={auditRecords} />
             }
           />
         </Route>

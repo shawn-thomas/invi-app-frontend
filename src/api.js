@@ -240,6 +240,24 @@ class InviApi {
 
     return res;
   }
+
+
+  /** Retrieves all audit records.
+  *
+  *    * Returns [{ recordId,
+  *               username,
+  *               sku,
+  *               previousQuantity,
+  *               newQuantity,
+  *               changeDate,
+  *               reason } ...]
+  */
+
+    static async getAuditRecords() {
+      let res = await this.request(`audit/`);
+
+      return res;
+    }
 }
 
 
