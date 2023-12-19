@@ -109,11 +109,10 @@ const AuditList = ({ listData }) => {
     data: listData,
     enableRowNumbers: true,
     enableRowSelection: true,
-    // enableGlobalFilter: false,
     paginationDisplayMode: 'pages',
     positionToolbarAlertBanner: 'bottom',
     manualSorting: false,
-    initialState: { showColumnFilters: false, showGlobalFilter: true },
+    initialState: { showColumnFilters: true, showGlobalFilter: true },
     muiSearchTextFieldProps: {
       size: 'small',
       variant: 'outlined',
@@ -128,11 +127,13 @@ const AuditList = ({ listData }) => {
       <Box
         sx={{
           display: 'flex',
-          justifyContent: 'space-between', // Set space-between for flex-end and flex-start alignment
+          justifyContent: 'space-between',
           gap: '16px',
           padding: '8px',
           flexWrap: 'wrap',
           alignItems: 'center',
+          backgroundColor: '#f5f5f5',
+          padding: '1em',
         }}
       >
         <Box sx={{
@@ -140,7 +141,6 @@ const AuditList = ({ listData }) => {
           gap: '0.5rem',
           alignItems: 'center'
         }}>
-          {/* import MRT sub-components */}
           <MRT_GlobalFilterTextField table={table} />
           <MRT_ToggleFiltersButton table={table} />
         </Box>
