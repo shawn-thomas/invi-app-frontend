@@ -14,6 +14,7 @@ import useCustomers from './hooks/useCustomers';
 import useProducts from './hooks/useProducts';
 import useInvoices from './hooks/useInvoices';
 import useAudits from "./hooks/useAudits";
+import AuditListWithLocalizationProvider from "./components/LoggedIn/Lists/AuditList";
 
 /** Define routes.
  *
@@ -112,7 +113,7 @@ function RoutesList({ signUp, login, logout }) {
           <Route
             path="/dashboard/audit"
             element={
-              <AuditList
+              <AuditListWithLocalizationProvider
                 listData={auditRecords} />
             }
           />
