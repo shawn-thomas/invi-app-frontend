@@ -45,6 +45,8 @@ function InvoiceList({ listData, onFetchInvoices }) {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
     }),
     total: row.totalAmount,
     status: row.status,
