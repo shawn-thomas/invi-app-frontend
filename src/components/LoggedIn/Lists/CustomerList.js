@@ -233,7 +233,7 @@ function CustomerList({ listData, onFetchCustomers }) {
   const table = useMaterialReactTable({
     columns,
     data: listData,
-    enableRowNumbers: true,
+    // enableRowNumbers: true,
     enableRowSelection: true,
     paginationDisplayMode: 'pages',
     positionToolbarAlertBanner: 'bottom',
