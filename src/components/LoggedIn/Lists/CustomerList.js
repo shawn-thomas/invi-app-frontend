@@ -134,10 +134,6 @@ function CustomerList({ listData, onFetchCustomers }) {
     handleModalToggle('isAddModalOpen', true);
   }
 
-  function handleAddModalClose() {
-    handleModalToggle('isAddModalOpen', false);
-  }
-
   function handleAddCustomerSuccess() {
     setSnackbarState({
       open: true,
@@ -154,14 +150,6 @@ function CustomerList({ listData, onFetchCustomers }) {
       selectedCustomerHandle: handle,
     }));
     handleModalToggle('isDeleteModalOpen', true);
-  }
-
-  async function handleDeleteModalCancel() {
-    setCustomerState((prevState) => ({
-      ...prevState,
-      selectedCustomerHandle: null,
-    }));
-    handleModalToggle('isDeleteModalOpen', false);
   }
 
   async function handleDeleteCustomer() {
@@ -186,21 +174,7 @@ function CustomerList({ listData, onFetchCustomers }) {
     handleModalToggle('isEditModalOpen', true);
   }
 
-  function handleEditModalClose() {
-    handleModalToggle('isEditModalOpen', false);
-    setCustomerState((prevState) => ({
-      ...prevState,
-      selectedCustomerData: null,
-      formErrors: [],
-    }));
-  }
-
-  /** Snackbar Alert -----------------------------------------------------------*/
-
-  function handleSnackbarClose() {
-    setSnackbarState({ ...snackbarState, open: false });
-  };
-
+  
   async function handleUpdateCustomer(updatedData) {
     try {
       const { firstName, lastName, email, phone, address, handle } = updatedData;
@@ -229,6 +203,12 @@ function CustomerList({ listData, onFetchCustomers }) {
     }
   }
 
+
+  /** Snackbar Alert -----------------------------------------------------------*/
+
+  function handleSnackbarClose() {
+    setSnackbarState({ ...snackbarState, open: false });
+  };
 
   const table = useMaterialReactTable({
     columns,
