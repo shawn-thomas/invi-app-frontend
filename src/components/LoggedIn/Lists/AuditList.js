@@ -129,11 +129,10 @@ const AuditList = ({ listData }) => {
           display: 'flex',
           justifyContent: 'space-between',
           gap: '16px',
-          padding: '8px',
+          padding: '1em',
           flexWrap: 'wrap',
           alignItems: 'center',
           backgroundColor: '#f5f5f5',
-          padding: '1em',
         }}
       >
         <Box sx={{
