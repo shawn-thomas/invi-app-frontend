@@ -226,7 +226,7 @@ class InviApi {
 
   /** Retrieves all invoices.
   *
-  *    * Returns [{ invoiceId,
+  *   Returns [{ invoiceId,
   *               customerHandle,
   *               invoiceDate,
   *               dateCreated,
@@ -241,10 +241,32 @@ class InviApi {
     return res;
   }
 
+  /**
+  * Send a patch request to the API to update the invoice that matches the
+  * specified invoiceId (string). Accepts an invoiceId, and data object containing
+  * the fields to be updated.
+  *
+  * data can be { status }
+  *
+  *    Returns [{ invoiceId,
+  *               customerHandle,
+  *               invoiceDate,
+  *               dateCreated,
+  *               totalAmount,
+  *               status,
+  *               items } ...]
+  */
+
+  static async updateInvoiceStatus(invoiceId, data) {
+    const res = await this.request(`invoice/${invoiceId}`, data, "patch");
+    return res.invoice;
+  }
+
+
 
   /** Retrieves all audit records.
   *
-  *    * Returns [{ recordId,
+  *     Returns [{ recordId,
   *               username,
   *               sku,
   *               previousQuantity,
@@ -253,11 +275,11 @@ class InviApi {
   *               reason } ...]
   */
 
-    static async getAuditRecords() {
-      let res = await this.request(`audit/`);
+  static async getAuditRecords() {
+    let res = await this.request(`audit/`);
 
-      return res;
-    }
+    return res;
+  }
 }
 
 
