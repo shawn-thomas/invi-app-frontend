@@ -9,6 +9,7 @@ import CustomerList from './components/LoggedIn/Lists/CustomerList';
 import ProductList from './components/LoggedIn/Lists/ProductList';
 import InvoiceList from "./components/LoggedIn/Lists/InvoiceList";
 import AuditList from "./components/LoggedIn/Lists/AuditList"
+import TestList from "./components/LoggedIn/Lists/TestList";
 import InvoiceForm from "./components/LoggedIn/Invoice/InvoiceForm";
 import useCustomers from './hooks/useCustomers';
 import useProducts from './hooks/useProducts';
@@ -37,7 +38,7 @@ function RoutesList({ signUp, login, logout }) {
   const { customers, handleFetchCustomers } = useCustomers(username || '');
   const { products, handleFetchProducts } = useProducts(username || '');
   const { invoices, invoiceNbr, handleFetchInvoices } = useInvoices(username || '');
-  const { auditRecords } = useAudits(username || '');
+  const { auditRecords, handleFetchRecords } = useAudits(username || '');
 
   console.log(`Audit records for ${username} :`, auditRecords);
 
@@ -84,6 +85,7 @@ function RoutesList({ signUp, login, logout }) {
               <ProductList
                 listData={products}
                 onFetchProducts={handleFetchProducts}
+                onFetchAudit={handleFetchRecords}
               />
             }
           />
