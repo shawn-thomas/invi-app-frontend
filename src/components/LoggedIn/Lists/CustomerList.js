@@ -1,131 +1,205 @@
 import React, { useState } from 'react';
 import {
+  Box,
   Button,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow,
-  TextField,
-  Snackbar,
+  Breadcrumbs,
+  Link,
+  Typography,
+  Tooltip,
+  IconButton
 } from '@mui/material';
-import MuiAlert from '@mui/material/Alert';
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+  MRT_GlobalFilterTextField,
+  MRT_ToggleFiltersButton,
+} from 'material-react-table';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import AddIcon from '@mui/icons-material/Add';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import * as XLSX from 'xlsx';
-import InviApi from '../../../api';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { mkConfig, generateCsv, download } from 'export-to-csv';
 import formatPhoneNumber from '../../../common/formatPhoneNumber';
+import SnackbarAlert from '../../../common/SnackbarAlert';
 import AddCustomer from '../modals/AddCustomer';
-import DeleteCustomer from '../modals/DeleteCustomer';
 import EditCustomer from '../modals/EditCustomer';
-import '../styles/GenericList.css';
+import DeleteCustomer from '../modals/DeleteCustomer';
+import InviApi from '../../../api';
+
 
 function CustomerList({ listData, onFetchCustomers }) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [isAddModalOpen, setAddModalOpen] = useState(false);
-  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [selectedCustomerHandle, setSelectedCustomerHandle] = useState(null);
-  const [isEditModalOpen, setEditModalOpen] = useState(false);
-  const [selectedCustomerData, setSelectedCustomerData] = useState(null);
-  const [updatedCustomerData, setUpdatedCustomerData] = useState(null);
-  const [formErrors, setFormErrors] = useState([]);
-  const [successUpdateMessage, setSuccessUpdateMessage] = useState(null);
-  const [successAddMessage, setSuccessAddMessage] = useState(null);
+  const [modalState, setModalState] = useState({
+    isAddModalOpen: false,
+    isDeleteModalOpen: false,
+    isEditModalOpen: false,
+  });
 
-  // Filter list based on the search query
-  const filteredRows = (Array.isArray(listData) && listData.length > 0)
-    ? listData.filter((row) => {
-      // Check if any value in the curr row contains the search query
-      const rowContainsQuery = Object.values(row).some((value) => {
+  const [customerState, setCustomerState] = useState({
+    selectedCustomerHandle: null,
+    selectedCustomerData: null,
+    updatedCustomerData: null,
+    formErrors: [],
+  });
 
-        if (typeof (value) === "string") {
-          return value.toLowerCase().includes(searchQuery.toLowerCase());
-        }
-        return false;
-      });
+  const [snackbarState, setSnackbarState] = useState({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
 
-      return rowContainsQuery;
-    })
-    : [];
+  function handleModalToggle(modalName, isOpen) {
+    setModalState((prevState) => ({
+      ...prevState,
+      [modalName]: isOpen,
+    }));
+  };
 
-  const formattedRows = filteredRows.map((row) => ({
-    customer: row.customerName,
-    name: `${row.firstName} ${row.lastName}`,
-    email: row.email,
-    phone: formatPhoneNumber(row.phone),
-    address: row.address,
-    handle: row.handle
-  }));
+  const columns = React.useMemo(
+    () => [
+      {
+        accessorKey: 'customerName',
+        header: 'Business Name',
+      },
+      {
+        accessorFn: (originalRow) => originalRow.fullName,
+        accessorKey: 'fullName',
+        header: 'Name',
+        Cell: ({ row }) => `${row.original.firstName} ${row.original.lastName}`,
+      },
+      {
+        accessorKey: 'email',
+        header: 'Email',
+      },
+      {
+        accessorKey: 'phone',
+        header: 'Phone',
+        Cell: ({ cell }) => formatPhoneNumber(cell.getValue()),
+      },
+      {
+        accessorKey: 'address',
+        header: 'Address',
+      },
+      {
+        accessorKey: 'actions',
+        header: 'Action(s)',
+        enableColumnFilter: false,
+        enableSorting: false,
+        enableColumnActions: false,
+        Cell: ({ row }) => (
+          <>
+            <Tooltip title="Edit">
+              <IconButton
+                onClick={() => handleEditModalOpen(row.original)}>
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete">
+              <IconButton
+                color="error"
+                onClick={() => handleDeleteModalOpen(row.original.handle)}>
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          </>
+        ),
+      }
+    ],
+    [],
+  );
 
-  /** Pagination ------------------------------------------------------------ */
+  /** Excel export ---------------------------------------------------------------*/
 
-  /** Handle change for current page. */
-  function handleChangePage(evt, newPage) {
-    setPage(newPage);
-  }
+  const csvConfig = mkConfig({
+    fieldSeparator: ',',
+    decimalSeparator: '.',
+    useKeysAsHeaders: true,
+  });
 
-  /** Handle change of number of rows per page. */
-  function handleChangeRowsPerPage(evt) {
-    setRowsPerPage(parseInt(evt.target.value, 10));
-    setPage(0);
-  }
+
+  function handleExportData() {
+    const csv = generateCsv(csvConfig)(listData);
+    download(csvConfig)(csv);
+  };
+
+  function handleExportRows(rows) {
+    const rowData = rows.map((row) => row.original);
+    const csv = generateCsv(csvConfig)(rowData);
+    download(csvConfig)(csv);
+  };
 
   /** Add Customer --------------------------------------------------------------*/
 
   function handleAddModalOpen() {
-    setAddModalOpen(true);
-  };
+    handleModalToggle('isAddModalOpen', true);
+  }
 
   function handleAddModalClose() {
-    setAddModalOpen(false);
-  };
+    handleModalToggle('isAddModalOpen', false);
+  }
 
   function handleAddCustomerSuccess() {
-    setSuccessAddMessage('Customer created successfully!');
+    setSnackbarState({
+      open: true,
+      message: 'Customer created successfully!',
+      severity: 'success',
+    });
   };
 
-
-  /** Customer Delete --------------------------------------------------------*/
+  /** Customer Delete -----------------------------------------------------------*/
 
   function handleDeleteModalOpen(handle) {
-    setSelectedCustomerHandle(handle);
-    setDeleteModalOpen(true);
+    setCustomerState((prevState) => ({
+      ...prevState,
+      selectedCustomerHandle: handle,
+    }));
+    handleModalToggle('isDeleteModalOpen', true);
   }
 
   async function handleDeleteModalCancel() {
-    setSelectedCustomerHandle(null);
-    setDeleteModalOpen(false);
+    setCustomerState((prevState) => ({
+      ...prevState,
+      selectedCustomerHandle: null,
+    }));
+    handleModalToggle('isDeleteModalOpen', false);
   }
 
   async function handleDeleteCustomer() {
-    await InviApi.removeCustomer(selectedCustomerHandle);
+    await InviApi.removeCustomer(customerState.selectedCustomerHandle);
+    setSnackbarState({
+      open: true,
+      message: 'Customer deleted successfully!',
+      severity: 'warning',
+    });
     onFetchCustomers();
-    setDeleteModalOpen(false);
+    handleModalToggle('isDeleteModalOpen', false);
   }
 
   /** Customer Edit ----------------------------------------------------------*/
 
   function handleEditModalOpen(customerData) {
-    const fNameLName = customerData.name.split(' ');
-    customerData['firstName'] = fNameLName[0];
-    customerData['lastName'] = fNameLName[1];
-    setSelectedCustomerData(customerData);
-    setEditModalOpen(true);
-    setFormErrors([]);
+    setCustomerState((prevState) => ({
+      ...prevState,
+      selectedCustomerData: customerData,
+      formErrors: [],
+    }));
+    handleModalToggle('isEditModalOpen', true);
   }
 
   function handleEditModalClose() {
-    setEditModalOpen(false);
-    setSelectedCustomerData(null);
-    setFormErrors([]);
+    handleModalToggle('isEditModalOpen', false);
+    setCustomerState((prevState) => ({
+      ...prevState,
+      selectedCustomerData: null,
+      formErrors: [],
+    }));
   }
+
+  /** Snackbar Alert -----------------------------------------------------------*/
+
+  function handleSnackbarClose() {
+    setSnackbarState({ ...snackbarState, open: false });
+  };
 
   async function handleUpdateCustomer(updatedData) {
     try {
@@ -134,158 +208,185 @@ function CustomerList({ listData, onFetchCustomers }) {
 
       await InviApi.updateCustomer(handle, updatedCustomer);
 
-      setUpdatedCustomerData(updatedCustomer);
+      setCustomerState((prevState) => ({
+        ...prevState,
+        selectedCustomerData: updatedCustomer,
+      }));
       onFetchCustomers();
-      handleEditModalClose();
+      handleModalToggle('isEditModalOpen', false);
+      setSnackbarState({
+        open: true,
+        message: `Customer ${firstName} ${lastName} updated successfully!`,
+        severity: 'success',
+      });
 
-      setSuccessUpdateMessage(`Customer ${firstName} ${lastName} updated successfully!`);
     } catch (error) {
-      setFormErrors(error);
+
+      setCustomerState((prevState) => ({
+        ...prevState,
+        formErrors: error,
+      }));
     }
   }
 
-  /** Excel export */
-  function handleExportToExcel() {
-    const ws = XLSX.utils.json_to_sheet(formattedRows);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Customers');
-    XLSX.writeFile(wb, 'customers.xlsx');
-  };
+
+  const table = useMaterialReactTable({
+    columns,
+    data: listData,
+    enableRowNumbers: true,
+    enableRowSelection: true,
+    paginationDisplayMode: 'pages',
+    positionToolbarAlertBanner: 'bottom',
+    manualSorting: false,
+    initialState: { showColumnFilters: true, showGlobalFilter: true },
+    muiSearchTextFieldProps: {
+      size: 'small',
+      variant: 'outlined',
+    },
+    muiPaginationProps: {
+      color: 'primary',
+      rowsPerPageOptions: [5, 10, 20],
+      shape: 'rounded',
+      variant: 'outlined',
+    },
+    renderTopToolbar: ({ table }) => (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: '16px',
+          padding: '1em',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          backgroundColor: '#f5f5f5',
+        }}
+      >
+        <Box sx={{
+          display: 'flex',
+          gap: '0.5rem',
+          alignItems: 'center'
+        }}>
+          <MRT_GlobalFilterTextField table={table} />
+          <MRT_ToggleFiltersButton table={table} />
+        </Box>
+        <Box sx={{
+          display: 'flex',
+          gap: '0.5rem',
+          alignItems: 'center'
+        }}>
+          <Tooltip title="Create New Customer">
+            <Button
+              variant="contained"
+              color="primary"
+              size='small'
+              startIcon={<AddIcon />}
+              onClick={handleAddModalOpen}
+            >
+              Create
+            </Button>
+          </Tooltip>
+        </Box>
+      </Box>
+    ),
+    renderRowActions: ({ row, table }) => (
+      <Box sx={{ display: 'flex', gap: '1rem' }}>
+        <Tooltip title="Edit">
+          <IconButton onClick={() => table.setEditingRow(row)}>
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Delete">
+          <IconButton color="error" onClick={() => handleDeleteModalOpen(row)}>
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
+      </Box>
+    ),
+  });
 
   return (
     <>
-      <div className="dashboard-header">
-        <Snackbar
-          open={successUpdateMessage}
-          autoHideDuration={6000}
-          onClose={() => setSuccessUpdateMessage(null)}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        >
-          <MuiAlert
-            elevation={6}
-            variant="filled"
-            severity="success"
-            onClose={() => setSuccessUpdateMessage(null)}
-          >
-            {successUpdateMessage}
-          </MuiAlert>
-        </Snackbar>
-        <Snackbar
-          open={successAddMessage}
-          autoHideDuration={6000}
-          onClose={() => setSuccessAddMessage(null)}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        >
-          <MuiAlert
-            elevation={6}
-            variant="filled"
-            severity="success"
-            onClose={() => setSuccessAddMessage(null)}
-            className="success-add-alert"
-          >
-            {successAddMessage}
-          </MuiAlert>
-        </Snackbar>
-        <div className="dashboard-title"><h2>Customers</h2></div>
-        <div className="dashboard-create-btn">
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            sx={{ marginBottom: 2, height: 36 }}
-            onClick={handleAddModalOpen}
-          >
-            Create
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<FileDownloadIcon />}
-            sx={{ marginBottom: 2, marginLeft: 2 }}
-            onClick={handleExportToExcel}>
-            Export
-          </Button>
-        </div>
-      </div>
-      <TextField
-        label="Search"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        className="db-table-search"
-        sx={{ marginBottom: 2 }}
+      <SnackbarAlert
+        open={snackbarState.open}
+        message={snackbarState.message}
+        severity={snackbarState.severity}
+        onClose={handleSnackbarClose}
       />
-      <TableContainer component={Paper} className="dashboard-table">
-        <Table sx={{ minWidth: 650, border: '1px solid #e0e0e0' }} aria-label="simple table">
-          <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
-            <TableRow>
-              <TableCell className="db-table-head">Customer</TableCell>
-              <TableCell className="db-table-head">Name</TableCell>
-              <TableCell className="db-table-head">Email</TableCell>
-              <TableCell className="db-table-head">Phone</TableCell>
-              <TableCell className="db-table-head">Address</TableCell>
-              <TableCell className="db-table-head">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {(rowsPerPage > 0
-              ? formattedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              : formattedRows
-            ).map((row) => (
-              <TableRow key={row.id}>
-                <TableCell className="db-table-cell">{row.customer}</TableCell>
-                <TableCell className="db-table-cell">{row.name}</TableCell>
-                <TableCell className="db-table-cell">{row.email}</TableCell>
-                <TableCell className="db-table-cell">{row.phone}</TableCell>
-                <TableCell className="db-table-cell">{row.address}</TableCell>
-                <TableCell className="db-table-cell">
-                  <EditOutlinedIcon
-                    style={{
-                      cursor: 'pointer',
-                      marginRight: '5px'
-                    }}
-                    onClick={() => handleEditModalOpen(row)}
-                  />
-                  <DeleteOutlinedIcon
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => handleDeleteModalOpen(row.handle)} />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 50]}
-          component="div"
-          count={formattedRows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </TableContainer>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: '16px',
+          padding: '8px',
+          paddingLeft: '0px',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+        }}
+      >
+        <Box>
+          <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
+            <Link
+              color="inherit"
+              href="/dashboard"
+              sx={{
+                fontSize: '0.9rem',
+                textDecoration: 'none'
+              }}>
+              Dashboard
+            </Link>
+            <Typography
+              color="text.primary"
+              sx={{ fontSize: '0.9rem' }}>
+              Customers
+            </Typography>
+          </Breadcrumbs>
+        </Box>
+        <Box>
+          <Button
+            //export all data that is currently in the table (ignore pagination, sorting, filtering, etc.)
+            onClick={handleExportData}
+            startIcon={<FileDownloadIcon />}
+            size='small'
+          >
+            Export All
+          </Button>
+          <Button
+            disabled={
+              !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()
+            }
+            //only export selected rows
+            onClick={() => handleExportRows(table.getSelectedRowModel().rows)}
+            startIcon={<FileDownloadIcon />}
+            size='small'
+          >
+            Export Selected
+          </Button>
+        </Box>
+      </Box>
+      <h2>Customers</h2>
+
+      <MaterialReactTable table={table}
+      />
       <AddCustomer
-        isOpen={isAddModalOpen}
-        onClose={handleAddModalClose}
+        isOpen={modalState.isAddModalOpen}
+        onClose={() => handleModalToggle('isAddModalOpen', false)}
         onFetchCustomer={onFetchCustomers}
         onSuccess={handleAddCustomerSuccess}
       />
       <DeleteCustomer
-        isOpen={isDeleteModalOpen}
-        onClose={handleDeleteModalCancel}
+        isOpen={modalState.isDeleteModalOpen}
+        onClose={() => handleModalToggle('isDeleteModalOpen', false)}
         onConfirm={handleDeleteCustomer}
       />
       <EditCustomer
-        isOpen={isEditModalOpen}
-        onClose={handleEditModalClose}
+        isOpen={modalState.isEditModalOpen}
+        onClose={() => handleModalToggle('isEditModalOpen', false)}
         onUpdate={handleUpdateCustomer}
-        initialData={selectedCustomerData}
-        formErrors={formErrors}
+        initialData={customerState.selectedCustomerData}
+        formErrors={customerState.formErrors}
       />
-      <div className="dashboard-export-btn">
-      </div>
     </>
   );
-
-
-}
+};
 
 export default CustomerList;
