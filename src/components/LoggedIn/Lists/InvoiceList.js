@@ -110,6 +110,7 @@ function InvoiceList({ listData, onFetchInvoices, onFetchAudit }) {
                     size="small"
                     sx={{
                       paddingLeft: '1em',
+                      width: '120px'
                     }}
                     onClick={() => handleMarkAsPaid(row.original)}
                   >
@@ -229,19 +230,19 @@ function InvoiceList({ listData, onFetchInvoices, onFetchAudit }) {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell className="db-table-head">SKU(s)</TableCell>
-              <TableCell className="db-table-head">Quantity</TableCell>
-              <TableCell className="db-table-head">Unit Price</TableCell>
-              <TableCell className="db-table-head">Line Subtotal</TableCell>
+              <TableCell sx={{ fontWeight: 'bold'}}>SKU(s)</TableCell>
+              <TableCell sx={{ fontWeight: 'bold'}}>Quantity</TableCell>
+              <TableCell sx={{ fontWeight: 'bold'}}>Unit Price</TableCell>
+              <TableCell sx={{ fontWeight: 'bold'}}>Line Subtotal</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {row.original?.items.map((item) => (
               <TableRow key={item.itemId}>
-                <TableCell className="db-table-cell">{item.sku}</TableCell>
-                <TableCell className="db-table-cell">{item.quantity}</TableCell>
-                <TableCell className="db-table-cell">${item.unitPrice}</TableCell>
-                <TableCell className="db-table-cell">${(item.unitPrice * item.quantity).toFixed(2)}</TableCell>
+                <TableCell>{item.sku}</TableCell>
+                <TableCell>{item.quantity}</TableCell>
+                <TableCell>${item.unitPrice}</TableCell>
+                <TableCell>${(item.unitPrice * item.quantity).toFixed(2)}</TableCell>
               </TableRow>
             ))}
           </TableBody>
