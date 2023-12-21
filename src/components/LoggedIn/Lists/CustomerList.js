@@ -13,6 +13,8 @@ import {
   useMaterialReactTable,
   MRT_GlobalFilterTextField,
   MRT_ToggleFiltersButton,
+  MRT_ToggleDensePaddingButton,
+  MRT_ToggleFullScreenButton,
 } from 'material-react-table';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -174,7 +176,7 @@ function CustomerList({ listData, onFetchCustomers }) {
     handleModalToggle('isEditModalOpen', true);
   }
 
-  
+
   async function handleUpdateCustomer(updatedData) {
     try {
       const { firstName, lastName, email, phone, address, handle } = updatedData;
@@ -218,7 +220,11 @@ function CustomerList({ listData, onFetchCustomers }) {
     paginationDisplayMode: 'pages',
     positionToolbarAlertBanner: 'bottom',
     manualSorting: false,
-    initialState: { showColumnFilters: true, showGlobalFilter: true },
+    initialState: {
+      showColumnFilters: true,
+      showGlobalFilter: true,
+      density: 'compact',
+    },
     muiSearchTextFieldProps: {
       size: 'small',
       variant: 'outlined',
@@ -248,6 +254,8 @@ function CustomerList({ listData, onFetchCustomers }) {
         }}>
           <MRT_GlobalFilterTextField table={table} />
           <MRT_ToggleFiltersButton table={table} />
+          <MRT_ToggleDensePaddingButton table={table} />
+          <MRT_ToggleFullScreenButton table={table} />
         </Box>
         <Box sx={{
           display: 'flex',
