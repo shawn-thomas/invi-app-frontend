@@ -1,200 +1,333 @@
-import '../styles/GenericList.css';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
+  Box,
   Button,
-  Paper,
+  Breadcrumbs,
+  Link,
+  Typography,
+  Tooltip,
   Table,
+  TableHead,
   TableBody,
+  TableRow,
   TableCell,
   TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow,
-  TextField,
+  Paper,
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Link as RouterLink } from 'react-router-dom';
+
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+  MRT_GlobalFilterTextField,
+  MRT_ToggleFiltersButton,
+} from 'material-react-table';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import * as XLSX from 'xlsx';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import AddIcon from '@mui/icons-material/Add';
+
+import { mkConfig, generateCsv, download } from 'export-to-csv';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+
+import SnackbarAlert from '../../../common/SnackbarAlert';
+import formatCustomerHandle from '../../../common/formatHandle';
+import InviApi from '../../../api';
 
 
-function InvoiceList({ listData, onFetchInvoices }) {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+function InvoiceList({ listData, onFetchInvoices, onFetchAudit }) {
+  const [snackbarState, setSnackbarState] = useState({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
 
-  // Filter list based on the search query
-  const filteredRows = (Array.isArray(listData) && listData.length > 0)
-    ? listData.filter((row) => {
-      // Check if any value in the curr row contains the search query
-      const rowContainsQuery = Object.values(row).some((value) => {
-        if (typeof (value) === "string") {
-          return value.toLowerCase().includes(searchQuery.toLowerCase());
+
+  const columns = React.useMemo(
+    () => [
+      {
+        accessorKey: 'invoiceId',
+        header: 'Invoice ID',
+      },
+      {
+        accessorKey: 'customerHandle',
+        header: 'Customer',
+        Cell: ({ cell }) => formatCustomerHandle(cell.getValue())
+      },
+      {
+        accessorFn: (originalRow) => new Date(originalRow.dateCreated),
+        accessorKey: 'dateCreated',
+        header: 'Created',
+        filterVariant: 'date-range',
+        Cell: ({ cell }) => {
+          return new Date(cell.getValue()).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+          });
         }
-        return false;
-      });
-      return rowContainsQuery;
-    })
-    : [];
-
-  const formattedRows = filteredRows.map((row) => ({
-    id: row.invoiceId,
-    customer: row.customerHandle,
-    created: new Date(row.dateCreated).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-    }),
-    total: row.totalAmount,
-    status: row.status,
-    items: row.items || [],
-  }));
-
-  const [expandedRow, setExpandedRow] = useState(null);
-
-  const handleAccordionChange = (invoiceId) => {
-    setExpandedRow((prevExpandedRow) =>
-      prevExpandedRow === invoiceId ? null : invoiceId
-    );
-  };
-
-  /** Pagination ------------------------------------------------------------ */
-
-  /** Handle change for current page. */
-  function handleChangePage(evt, newPage) {
-    setPage(newPage);
-  }
-
-  /** Handle change of number of rows per page. */
-  function handleChangeRowsPerPage(evt) {
-    setRowsPerPage(parseInt(evt.target.value, 10));
-    setPage(0);
-  }
-
-  /** Excel export */
-  function handleExportToExcel() {
-    const ws = XLSX.utils.json_to_sheet(formattedRows);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Inventory');
-    XLSX.writeFile(wb, 'inventory.xlsx');
-  };
-
-
-  return (
-    <>
-      <div className="dashboard-header">
-        <div className="dashboard-title">
-          <h2>Invoices</h2>
-        </div>
-        <div className="dashboard-create-btn">
-          <Link to="/dashboard/invoices/create">
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddIcon />}
-              sx={{ marginBottom: 2, marginRight: 2, marginLeft: 2, height: 36 }}
+      },
+      {
+        accessorKey: 'totalAmount',
+        header: 'Total',
+        filterFn: 'between',
+        Cell: ({ cell }) => `$${cell.getValue()}`
+      },
+      {
+        accessorKey: 'status',
+        header: 'Status',
+        filterVariant: 'select',
+        filterSelectOptions: ['Paid', 'Pending'],
+        Cell: ({ cell, row }) => {
+          const isInvoicePaid = cell.getValue() === 'Paid';
+          return (
+            <Box
+              sx={{
+                display: 'flex',
+                gap: '8px',
+                alignItems: 'center',
+              }}
             >
-              Create
-            </Button>
-          </Link>
-          <Button
-            variant="outlined"
-            startIcon={<FileDownloadIcon />}
-            sx={{ marginBottom: 2 }}
-            onClick={handleExportToExcel}
-          >
-            Export
-          </Button>
-        </div>
-      </div>
-      <TextField
-        label="Search"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        className="db-table-search"
-        sx={{ marginBottom: 2 }}
-      />
-      <TableContainer component={Paper} className="dashboard-table">
-        <Table sx={{ minWidth: 650, border: '1px solid #e0e0e0' }} aria-label="simple table">
-          <TableHead >
-            <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-              <TableCell className="db-table-head">Invoice ID</TableCell>
-              <TableCell className="db-table-head">Customer</TableCell>
-              <TableCell className="db-table-head">Created</TableCell>
-              <TableCell className="db-table-head">Total</TableCell>
-              <TableCell className="db-table-head">Status</TableCell>
-              <TableCell className="db-table-head"></TableCell>
+              <Box
+                component="span"
+                sx={{
+                  backgroundColor: isInvoicePaid ? '#66bb6a' : '#d3d3d3',
+                  display: 'inline-block',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  width: '80px',
+                  textAlign: 'center',
+                }}
+              >
+                <b>{cell.getValue()}</b>
+              </Box>
+              {row.original.status === 'Pending' && (
+                <Tooltip title="Mark as Paid">
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    sx={{
+                      paddingLeft: '1em',
+                    }}
+                    onClick={() => handleMarkAsPaid(row.original)}
+                  >
+                    Mark as Paid
+                  </Button>
+                </Tooltip>
+              )}
+            </Box>
+          );
+        }
+      },
+    ],
+    [],
+  );
+
+  /** Excel export ---------------------------------------------------------------*/
+
+  const csvConfig = mkConfig({
+    fieldSeparator: ',',
+    decimalSeparator: '.',
+    useKeysAsHeaders: true,
+  });
+
+
+  function handleExportData() {
+    const csv = generateCsv(csvConfig)(listData);
+    download(csvConfig)(csv);
+  };
+
+  function handleExportRows(rows) {
+    const rowData = rows.map((row) => row.original);
+    const csv = generateCsv(csvConfig)(rowData);
+    download(csvConfig)(csv);
+  };
+
+  /** Update Invoice ----------------------------------------------------------- */
+
+  async function handleMarkAsPaid(rowData) {
+    try {
+      const { invoiceId } = rowData;
+      await InviApi.updateInvoiceStatus(invoiceId, { status: 'Paid' });
+      onFetchInvoices();
+      onFetchAudit();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  /** Snackbar Alert -----------------------------------------------------------*/
+
+  function handleSnackbarClose() {
+    setSnackbarState({ ...snackbarState, open: false });
+  };
+
+  const table = useMaterialReactTable({
+    columns,
+    data: listData,
+    enableRowSelection: true,
+    enableExpanding: true,
+    enableExpandAll: false,
+    paginationDisplayMode: 'pages',
+    positionToolbarAlertBanner: 'bottom',
+    manualSorting: false,
+    initialState: { showColumnFilters: true, showGlobalFilter: true },
+    muiSearchTextFieldProps: {
+      size: 'small',
+      variant: 'outlined',
+    },
+    muiPaginationProps: {
+      color: 'primary',
+      rowsPerPageOptions: [5, 10, 20],
+      shape: 'rounded',
+      variant: 'outlined',
+    },
+    renderTopToolbar: ({ table }) => (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: '16px',
+          padding: '1em',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          backgroundColor: '#f5f5f5',
+        }}
+      >
+        <Box sx={{
+          display: 'flex',
+          gap: '0.5rem',
+          alignItems: 'center'
+        }}>
+          <MRT_GlobalFilterTextField table={table} />
+          <MRT_ToggleFiltersButton table={table} />
+        </Box>
+        <Box sx={{
+          display: 'flex',
+          gap: '0.5rem',
+          alignItems: 'center'
+        }}>
+          <Tooltip title="Create New Invoice">
+            <RouterLink to="/dashboard/invoices/create">
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddIcon />}
+                size='small'
+              >
+                Create
+              </Button>
+            </RouterLink>
+          </Tooltip>
+        </Box>
+      </Box>
+    ),
+    renderDetailPanel: ({ row }) => (
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell className="db-table-head">SKU(s)</TableCell>
+              <TableCell className="db-table-head">Quantity</TableCell>
+              <TableCell className="db-table-head">Unit Price</TableCell>
+              <TableCell className="db-table-head">Line Subtotal</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {(rowsPerPage > 0
-              ? formattedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              : formattedRows
-            ).map((row) => (
-              <React.Fragment key={row.id}>
-                <TableRow>
-                  <TableCell className="db-table-cell">{row.id}</TableCell>
-                  <TableCell className="db-table-cell">{row.customer}</TableCell>
-                  <TableCell className="db-table-cell">{row.created}</TableCell>
-                  <TableCell className="db-table-cell">${row.total}</TableCell>
-                  <TableCell className="db-table-cell">{row.status}</TableCell>
-                  <TableCell className="db-table-cell">
-                    <Button
-                      variant="outlined"
-                      onClick={() => handleAccordionChange(row.id)}
-                      startIcon={<ExpandMoreIcon />}
-                      sx={{ '&:hover': { backgroundColor: '#ececec' } }}
-                    >
-                      Details
-                    </Button>
-                  </TableCell>
-                </TableRow>
-                {expandedRow === row.id && (
-                  <TableRow sx={{ backgroundColor: '#f0f0f0' }}>
-                    <TableCell colSpan={6} sx={{ padding: 1 }}>
-                      <Table sx={{ backgroundColor: 'white', border: '1px solid #e0e0e0' }}>
-                        <TableHead>
-                          <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                            <TableCell className="db-table-head">SKU(s)</TableCell>
-                            <TableCell className="db-table-head">Quantity</TableCell>
-                            <TableCell className="db-table-head">Unit Price</TableCell>
-                            <TableCell className="db-table-head">Line Subtotal</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {row.items.map((item) => (
-                            <TableRow key={item.itemId}>
-                              <TableCell className="db-table-cell">{item.sku}</TableCell>
-                              <TableCell className="db-table-cell">{item.quantity}</TableCell>
-                              <TableCell className="db-table-cell">${item.unitPrice}</TableCell>
-                              <TableCell className="db-table-cell">${(item.unitPrice * item.quantity).toFixed(2)}</TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </React.Fragment>
+            {row.original?.items.map((item) => (
+              <TableRow key={item.itemId}>
+                <TableCell className="db-table-cell">{item.sku}</TableCell>
+                <TableCell className="db-table-cell">{item.quantity}</TableCell>
+                <TableCell className="db-table-cell">${item.unitPrice}</TableCell>
+                <TableCell className="db-table-cell">${(item.unitPrice * item.quantity).toFixed(2)}</TableCell>
+              </TableRow>
             ))}
           </TableBody>
         </Table>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 50]}
-          component="div"
-          count={formattedRows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
       </TableContainer>
-      <div className="dashboard-export-btn"></div>
+    ),
+  });
+
+  return (
+    <>
+      <SnackbarAlert
+        open={snackbarState.open}
+        message={snackbarState.message}
+        severity={snackbarState.severity}
+        onClose={handleSnackbarClose}
+      />
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: '16px',
+          padding: '8px',
+          paddingLeft: '0px',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+        }}
+      >
+        <Box>
+          <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
+            <Link
+              color="inherit"
+              href="/dashboard"
+              sx={{
+                fontSize: '0.9rem',
+                textDecoration: 'none'
+              }}>
+              Dashboard
+            </Link>
+            <Typography
+              color="text.primary"
+              sx={{ fontSize: '0.9rem' }}>
+              Invoices
+            </Typography>
+          </Breadcrumbs>
+        </Box>
+        <Box>
+          <Button
+            //export all data that is currently in the table (ignore pagination, sorting, filtering, etc.)
+            onClick={handleExportData}
+            startIcon={<FileDownloadIcon />}
+            size='small'
+          >
+            Export All
+          </Button>
+          <Button
+            disabled={
+              !table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()
+            }
+            //only export selected rows
+            onClick={() => handleExportRows(table.getSelectedRowModel().rows)}
+            startIcon={<FileDownloadIcon />}
+            size='small'
+          >
+            Export Selected
+          </Button>
+        </Box>
+      </Box>
+      <h2>Invoices</h2>
+
+      <MaterialReactTable table={table}
+      />
     </>
+  );
+};
+
+function InvoiceListWithLocalizationProvider({ listData, onFetchAudit, onFetchInvoices }) {
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <InvoiceList
+        listData={listData}
+        onFetchAudit={onFetchAudit}
+        onFetchInvoices={onFetchInvoices}
+      />
+    </LocalizationProvider>
   );
 }
 
-export default InvoiceList;
+export default InvoiceListWithLocalizationProvider;
+

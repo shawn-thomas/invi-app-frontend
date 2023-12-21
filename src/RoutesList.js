@@ -7,15 +7,13 @@ import SignupForm from './components/LoggedOut/LoginSignup/SignupForm';
 import Dashboard from './components/LoggedIn/Dashboard/Dashboard';
 import CustomerList from './components/LoggedIn/Lists/CustomerList';
 import ProductList from './components/LoggedIn/Lists/ProductList';
-import InvoiceList from "./components/LoggedIn/Lists/InvoiceList";
-import AuditList from "./components/LoggedIn/Lists/AuditList"
-import TestList from "./components/LoggedIn/Lists/TestList";
+import AuditListWithLocalizationProvider from "./components/LoggedIn/Lists/AuditList";
+import InvoiceListWithLocalizationProvider from "./components/LoggedIn/Lists/InvoiceList";
 import InvoiceForm from "./components/LoggedIn/Invoice/InvoiceForm";
 import useCustomers from './hooks/useCustomers';
 import useProducts from './hooks/useProducts';
 import useInvoices from './hooks/useInvoices';
 import useAudits from "./hooks/useAudits";
-import AuditListWithLocalizationProvider from "./components/LoggedIn/Lists/AuditList";
 
 /** Define routes.
  *
@@ -92,9 +90,10 @@ function RoutesList({ signUp, login, logout }) {
           <Route
             path="/dashboard/invoices"
             element={
-              <InvoiceList
+              <InvoiceListWithLocalizationProvider
                 listData={invoices}
                 onFetchInvoices={handleFetchInvoices}
+                onFetchAudit={handleFetchRecords}
               />
             }
           />
