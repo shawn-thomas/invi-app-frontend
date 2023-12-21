@@ -42,8 +42,11 @@ function App() {
 
   /** Logout user, update token to empty string */
   function logout() {
-    setToken("");
-    InviApi.token = "";
+    setCurrentUser({
+      infoLoaded: true,
+      data: null
+    });
+    setToken(null);
   }
 
   useEffect(function fetchUserWhenMountedOrTokenChange() {
@@ -77,11 +80,13 @@ function App() {
   return (
     <div className="App">
       <userContext.Provider value={{
-        currentUser: currentUser.data
+        currentUser: currentUser.data,
+        setCurrentUser
       }}>
         <BrowserRouter>
 
           <RoutesList
+            currentUser={currentUser.data}
             signUp={signUp}
             login={login}
             logout={logout}
