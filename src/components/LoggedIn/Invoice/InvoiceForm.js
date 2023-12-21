@@ -6,7 +6,10 @@ import {
   Button,
   Grid,
   Snackbar,
+  Breadcrumbs,
+  Link,
 } from '@mui/material';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import MuiAlert from '@mui/material/Alert';
 import InvoiceSender from './InvoiceSender';
 import InvoiceRecipient from './InvoiceRecipient';
@@ -130,8 +133,8 @@ function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvo
         return;
       }
 
-      if (itemsMap === null){
-        setErrorMessage('Please provide at least one invoice item.')
+      if (itemsMap === null) {
+        setErrorMessage('Please provide at least one invoice item.');
       }
 
       const currentDate = new Date();
@@ -142,7 +145,7 @@ function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvo
         customerHandle: invoice.recipient.handle,
         invoiceDate: formattedDate,
         items: itemsMap,
-        totalAmount: +invoice.total,
+        totalAmount: +invoice.total * 1.13,
         status: 'Pending',
       };
 
@@ -160,91 +163,118 @@ function InvoiceForm({ user, customers, products, currentInvoiceNbr, onFetchInvo
     }
   };
   return (
-    <Container maxWidth="lg" style={{ margin: '20px auto', padding: '20px' }}>
-      <Snackbar
-        open={!!successAddMessage || !!errorMessage}
-        onClose={() => {
-          setSuccessAddMessage(null);
-          setErrorMessage(null);
-          setFormSubmitted(false);
-        }}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <MuiAlert
-          elevation={6}
-          variant={'filled'}
-          severity={successAddMessage ? 'success' : 'warning'}
+    <>
+      <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
+        <Link
+          color="inherit"
+          href="/dashboard"
+          sx={{
+            fontSize: '0.9rem',
+            textDecoration: 'none'
+          }}>
+          Dashboard
+        </Link>
+        <Link
+          color="inherit"
+          href="/dashboard/invoices"
+          sx={{
+            fontSize: '0.9rem',
+            textDecoration: 'none'
+          }}>
+          Invoices
+        </Link>
+        <Typography
+          color="text.primary"
+          sx={{ fontSize: '0.9rem' }}>
+          Create Invoice
+        </Typography>
+      </Breadcrumbs>
+      <Container maxWidth="lg" style={{ margin: '20px auto', padding: '20px' }}>
+        <Snackbar
+          open={!!successAddMessage || !!errorMessage}
           onClose={() => {
             setSuccessAddMessage(null);
             setErrorMessage(null);
+            setFormSubmitted(false);
           }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >
-          {successAddMessage || errorMessage}
-        </MuiAlert>
-      </Snackbar>
-      <Paper elevation={3} style={{ padding: '20px', marginBottom: '20px' }}>
-        <div className='invoice-header'>
-          <div className='invoice-number'>
-            <label htmlFor="invoice-number">
-              Invoice # {formatInvoiceNumber(currentInvoiceNbr)}
-            </label>
+          <MuiAlert
+            elevation={6}
+            variant={'filled'}
+            severity={successAddMessage ? 'success' : 'warning'}
+            onClose={() => {
+              setSuccessAddMessage(null);
+              setErrorMessage(null);
+            }}
+          >
+            {successAddMessage || errorMessage}
+          </MuiAlert>
+        </Snackbar>
+        <Paper elevation={3} style={{ padding: '20px', marginBottom: '20px' }}>
+          <div className='invoice-header'>
+            <div className='invoice-number'>
+              <label htmlFor="invoice-number">
+                Invoice # {formatInvoiceNumber(currentInvoiceNbr)}
+              </label>
+            </div>
+
+            {/* Sender and Recipient Info */}
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={4}>
+                <Typography variant="h6" gutterBottom>
+                  From
+                </Typography>
+                <InvoiceSender sender={user} onInputChange={handleInputChange} />
+              </Grid>
+
+              <Grid item xs={12} md={8}>
+                <Typography variant="h6" gutterBottom>
+                  Bill to
+                </Typography>
+                <InvoiceRecipient
+                  customers={customers}
+                  onInputChange={handleInputChange}
+                  addRecipient={handleAddRecipient}
+                  removeRecipient={handleRemoveRecipient}
+                  formSubmitted={formSubmitted}
+                  onFetchCustomers={onFetchCustomers}
+                />
+              </Grid>
+            </Grid>
           </div>
 
-          {/* Sender and Recipient Info */}
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={4}>
-              <Typography variant="h6" gutterBottom>
-                From
-              </Typography>
-              <InvoiceSender sender={user} onInputChange={handleInputChange} />
-            </Grid>
-
-            <Grid item xs={12} md={8}>
-              <Typography variant="h6" gutterBottom>
-                Bill to
-              </Typography>
-              <InvoiceRecipient
-                customers={customers}
-                onInputChange={handleInputChange}
-                addRecipient={handleAddRecipient}
-                removeRecipient={handleRemoveRecipient}
-                formSubmitted={formSubmitted}
-                onFetchCustomers={onFetchCustomers}
-              />
-            </Grid>
-          </Grid>
-        </div>
-
-        {/* Invoice Items */}
-        <Typography variant="h6" gutterBottom>
-          Invoice Items
-        </Typography>
-        <InvoiceItems
-          products={products}
-          onAddInvoiceItem={handleAddInvoiceItem}
-          onDeleteInvoiceItem={handleDeleteInvoiceItem}
-          formSubmitted={formSubmitted}
-          onFetchProducts={onFetchProducts}
-        />
-
-        {/* Total */}
-        <div className='invoice-total'>
-          <InvoiceTotal
-            invoiceItems={invoice.items}
+          {/* Invoice Items */}
+          <Typography variant="h6" gutterBottom>
+            Invoice Items
+          </Typography>
+          <InvoiceItems
+            products={products}
+            onAddInvoiceItem={handleAddInvoiceItem}
+            onDeleteInvoiceItem={handleDeleteInvoiceItem}
+            formSubmitted={formSubmitted}
+            onFetchProducts={onFetchProducts}
           />
-        </div>
 
-        <div className='invoice-create'>
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ marginTop: '1rem' }}
-            onClick={handleCreateInvoice}>
-            Create
-          </Button>
-        </div>
-      </Paper>
-    </Container>
+          {/* Total */}
+          <div className='invoice-total'>
+            <InvoiceTotal
+              invoiceItems={invoice.items}
+            />
+          </div>
+
+          <div className='invoice-create'>
+            <Button
+              variant="contained"
+              color="primary"
+              style={{ marginTop: '1rem' }}
+              onClick={handleCreateInvoice}>
+              Create
+            </Button>
+          </div>
+        </Paper>
+      </Container>
+    </>
   );
 }
 
