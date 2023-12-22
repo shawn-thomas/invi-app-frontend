@@ -4,7 +4,7 @@ import '../styles/Dashboard.css'
 import Sidebar from './Sidebar';
 
 function Dashboard({ logout }) {
-  const [SidebarExpanded, setSidebarExpanded] = useState('expanded');
+  const [SidebarExpanded, setSidebarExpanded] = useState(false);
 
   return (
     <div className="page">
