@@ -2,17 +2,12 @@ import { useContext, useState, useEffect } from "react";
 import { Outlet } from 'react-router-dom';
 import '../styles/Dashboard.css'
 import Sidebar from './Sidebar';
-import Header from "./Header";
-import CustomerList from "../Lists/CustomerList";
-import userContext from "../../../userContext";
-import InviApi from "../../../api";
 
 function Dashboard({ logout }) {
-  const [SidebarExpanded, setSidebarExpanded] = useState(false);
+  const [SidebarExpanded, setSidebarExpanded] = useState('expanded');
 
   return (
     <div className="page">
-      <Header />
       <div className="dashboard">
         <Sidebar
           logout={logout}
