@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Courgette&display=swap');
+
 .sidebar {
   position: sticky;
   top: 0;
@@ -85,19 +87,35 @@
   text-decoration: none;
 }
 
-.sidebar ul li:hover {
-  background-color: #79aaeb;
-}
-
 .sidebar-li-icon {
   font-size: 24px;
   color: #ffffff;
 }
 
-.sidebar span {
+.sidebar span:not(#company-text) {
   font-size: 16px;
   font-weight: 500;
   color: #ffffff;
   margin-left: 15px;
-  width: 440px;
+}
+
+.sidebar-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 10px;
+  padding-bottom: 20px;
+}
+
+.company-icon {
+  width: 30px;
+  height: auto;
+  /* margin-right: 10px; */
+}
+
+#company-text {
+  font-size: 30px;
+  font-family: 'Courgette', cursive;
+  margin-left: 8px;
+  margin-top: 15px;
 }

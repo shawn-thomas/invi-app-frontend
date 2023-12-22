@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from "react-router-dom";
-import { Divider, Tooltip } from '@mui/material';
+import { Divider, Tooltip, List, ListItem, Popover } from '@mui/material';
 import DashboardCustomizeOutlinedIcon from '@mui/icons-material/DashboardCustomizeOutlined';
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
@@ -9,13 +9,13 @@ import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import LogoutSharpIcon from '@mui/icons-material/LogoutSharp';
-import  Invi  from '../../../images/InviBrand.svg';
+import Invi from '../../../images/InviBrand.svg';
 import '../styles/Sidebar.css';
-
 
 function Sidebar({ logout, onSidebarItemClick }) {
   const navigate = useNavigate();
   const [isExpanded, setExpanded] = useState(true);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   function handleLogout(evt) {
     evt.preventDefault();
@@ -23,35 +23,84 @@ function Sidebar({ logout, onSidebarItemClick }) {
     navigate('/');
   }
 
+  const handleSubmenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleSubmenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const openSubmenu = Boolean(anchorEl);
+
   const sidebarItems = [
     { icon: <DashboardCustomizeOutlinedIcon className="sidebar-li-icon" />, text: 'Dashboard', link: '/' },
     { icon: <GroupsOutlinedIcon className="sidebar-li-icon" />, text: 'Customers', link: '/dashboard/customers' },
     { icon: <CategoryOutlinedIcon className="sidebar-li-icon" />, text: 'Inventory', link: '/dashboard/inventory' },
-    { icon: <ReceiptLongOutlinedIcon className="sidebar-li-icon" />, text: 'Invoices', link: '/dashboard/invoices' },
+    {
+      icon: <ReceiptLongOutlinedIcon className="sidebar-li-icon" />,
+      text: 'Invoices',
+      link: '/dashboard/invoices',
+      submenu: [
+        { text: 'Create Invoice', link: '/dashboard/invoices/create' },
+      ],
+    },
     { icon: <ChecklistOutlinedIcon className="sidebar-li-icon" />, text: 'Audit', link: '/dashboard/audit' },
   ];
 
   return (
     <div className={`sidebar ${isExpanded ? 'expanded' : 'collapsed'}`}>
       <div className={`sidebar-center ${isExpanded ? '' : 'collapsed'}`}>
-        <ul>
+      <div className="sidebar-top">
+          <img src={Invi} alt="Invi" className="company-icon" />
+          {isExpanded && <span id="company-text">Invi</span>}
+        </div>
+        <List>
           {sidebarItems.map((item, index) => (
-            <Tooltip key={index} title={item.text} placement="right" arrow>
-              <Link className="sidebar-link" to={item.link}>
-                <li>{item.icon}{isExpanded && <span>{item.text}</span>}</li>
-              </Link>
-            </Tooltip>
+            <div key={index}>
+              <Tooltip title={item.text} placement="right" arrow>
+                <ListItem button component={Link} to={item.link} onClick={item.submenu ? handleSubmenuClick : null}>
+                  {item.icon}
+                  {isExpanded && <span>{item.text}</span>}
+                </ListItem>
+              </Tooltip>
+              {item.submenu && (
+                <Popover
+                  open={openSubmenu}
+                  anchorEl={anchorEl}
+                  onClose={handleSubmenuClose}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                  }}
+                >
+                  <List dense>
+                    {item.submenu.map((subitem, subindex) => (
+                      <Tooltip key={subindex} title={subitem.text} placement="right" arrow>
+                        <ListItem button component={Link} to={subitem.link} className="submenu-item">
+                          {isExpanded && <span>{subitem.text}</span>}
+                        </ListItem>
+                      </Tooltip>
+                    ))}
+                  </List>
+                </Popover>
+              )}
+            </div>
           ))}
           <Divider />
           <div onClick={handleLogout} className="sidebar-logout">
             <Tooltip title="Sign Out" placement="right" arrow>
-              <li>
+              <ListItem button>
                 <LogoutSharpIcon className="sidebar-li-icon" />
                 {isExpanded && <span>Sign Out</span>}
-              </li>
+              </ListItem>
             </Tooltip>
           </div>
-        </ul>
+        </List>
       </div>
       <div
         className="resize-icon"
@@ -63,5 +112,6 @@ function Sidebar({ logout, onSidebarItemClick }) {
     </div>
   );
 }
+
 
 export default Sidebar;
