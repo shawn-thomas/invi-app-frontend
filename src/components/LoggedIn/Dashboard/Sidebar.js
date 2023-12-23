@@ -80,11 +80,9 @@ function Sidebar({ logout, onSidebarItemClick }) {
                 >
                   <List dense>
                     {item.submenu.map((subitem, subindex) => (
-                      <Tooltip key={subindex} title={subitem.text} placement="right" arrow>
                         <ListItem button component={Link} to={subitem.link} className="submenu-item">
-                          {isExpanded && <span>{subitem.text}</span>}
+                          {isExpanded && <span><b>{subitem.text}</b></span>}
                         </ListItem>
-                      </Tooltip>
                     ))}
                   </List>
                 </Popover>
