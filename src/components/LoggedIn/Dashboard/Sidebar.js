@@ -34,7 +34,7 @@ function Sidebar({ logout, onSidebarItemClick }) {
   const openSubmenu = Boolean(anchorEl);
 
   const sidebarItems = [
-    { icon: <DashboardCustomizeOutlinedIcon className="sidebar-li-icon" />, text: 'Dashboard', link: '/' },
+    { icon: <DashboardCustomizeOutlinedIcon className="sidebar-li-icon" />, text: 'Dashboard', link: '/dashboard' },
     { icon: <GroupsOutlinedIcon className="sidebar-li-icon" />, text: 'Customers', link: '/dashboard/customers' },
     { icon: <CategoryOutlinedIcon className="sidebar-li-icon" />, text: 'Inventory', link: '/dashboard/inventory' },
     {

@@ -5,6 +5,7 @@ import Homepage from './components/LoggedOut/Homepage/Homepage';
 import LoginForm from './components/LoggedOut/LoginSignup/LoginForm';
 import SignupForm from './components/LoggedOut/LoginSignup/SignupForm';
 import Dashboard from './components/LoggedIn/Dashboard/Dashboard';
+import Charts from "./components/LoggedIn/Charts/Charts";
 import CustomerList from './components/LoggedIn/Lists/CustomerList';
 import ProductList from './components/LoggedIn/Lists/ProductList';
 import AuditListWithLocalizationProvider from "./components/LoggedIn/Lists/AuditList";
@@ -46,7 +47,16 @@ function RoutesList({ currentUser, signUp, login, logout }) {
 
       {currentUser &&
         <>
-          <Route path="/dashboard" element={<Dashboard logout={logout} />}>
+          <Route path="/" element={<Dashboard logout={logout} />}>
+          <Route
+              path="/dashboard"
+              element={
+                <Charts
+                  customersData={customers}
+                  inventoryData={products}
+                  invoiceData={invoices}/>
+              }
+            />
             <Route
               path="/dashboard/customers"
               element={
@@ -99,7 +109,7 @@ function RoutesList({ currentUser, signUp, login, logout }) {
             />
           </Route>
           <Route path="/" element={<Navigate to="/dashboard" />} />
-          <Route path="*" element={<Navigate to="/" />}/>
+          <Route path="*" element={<Navigate to="/dashboard" />}/>
         </>
       }
     </Routes>
