@@ -6,7 +6,8 @@ This is the React frontend for Invi. Combined with <a href="https://github.com/s
 
 ### Built With
 * React
-* Material UI 
+* Material UI
+* material-react-table
 
 <!-- GETTING STARTED -->
 ## Getting Started
