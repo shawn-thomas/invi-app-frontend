@@ -6,17 +6,11 @@ This is the React frontend for Invi. Combined with <a href="https://github.com/s
 
 ### Built With
 * React
-* Material UI 
+* Material UI
+* material-react-table
 
 <!-- GETTING STARTED -->
 ## Getting Started
-
-### Prerequisites
-
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
 
 ### Installation
 
@@ -26,5 +20,6 @@ This is the React frontend for Invi. Combined with <a href="https://github.com/s
    ```
 2. Install NPM packages
    ```sh
-   npm install
+   npm install --legacy-peer-deps
+   npm start
    ```
