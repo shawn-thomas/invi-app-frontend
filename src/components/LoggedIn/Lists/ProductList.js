@@ -135,6 +135,14 @@ function ProductList({ listData, onFetchProducts, onFetchAudit }) {
     handleModalToggle('isAddModalOpen', true);
   }
 
+  function handleAddProductSuccess() {
+    setSnackbarState({
+      open: true,
+      message: 'Product created successfully!',
+      severity: 'success',
+    });
+  };
+
   function handleAddModalClose() {
     handleModalToggle('isAddModalOpen', false);
   }
@@ -153,7 +161,7 @@ function ProductList({ listData, onFetchProducts, onFetchAudit }) {
     setSnackbarState({
       open: true,
       message: `${productState.selectedSku} deleted successfully`,
-      severity: 'warning',
+      severity: 'success',
     });
 
     await InviApi.removeProduct(productState.selectedSku);
@@ -367,6 +375,7 @@ function ProductList({ listData, onFetchProducts, onFetchAudit }) {
         isOpen={modalState.isAddModalOpen}
         onClose={handleAddModalClose}
         onFetchProduct={onFetchProducts}
+        onSuccess={handleAddProductSuccess}
       />
       <DeleteProduct
         isOpen={modalState.isDeleteModalOpen}

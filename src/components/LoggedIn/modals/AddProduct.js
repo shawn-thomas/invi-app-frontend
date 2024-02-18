@@ -11,7 +11,7 @@ import InviApi from '../../../api';
 import Alert from '../../../common/Alert';
 
 
-function AddProduct({ isOpen, onClose, onFetchProduct }) {
+function AddProduct({ isOpen, onClose, onFetchProduct, onSuccess }) {
   const [newProductData, setNewProductData] = useState({
     sku: '',
     productName: '',
@@ -45,13 +45,13 @@ function AddProduct({ isOpen, onClose, onFetchProduct }) {
       errors.sku = 'SKU is required';
     }
     if (!newProductData.productName) {
-      errors.name = 'Product name is required';
+      errors.productName = 'Product name is required';
     }
     if (!newProductData.price) {
       errors.price = 'Price is required';
     }
     if (!newProductData.quantityAvailable) {
-      errors.quantity = 'Quantity is required';
+      errors.quantityAvailable = 'Quantity is required';
     }
 
     setValidationErrors(errors);
@@ -74,13 +74,13 @@ function AddProduct({ isOpen, onClose, onFetchProduct }) {
         return;
       }
 
-      const updatedData = {
+      const validatedData = {
         ...newProductData,
         price,
         quantityAvailable,
       };
 
-      await InviApi.createProduct(updatedData);
+      const createdProduct = await InviApi.createProduct(validatedData);
 
       setNewProductData({
         sku: '',
@@ -90,6 +90,7 @@ function AddProduct({ isOpen, onClose, onFetchProduct }) {
         quantityAvailable: '',
       });
 
+      onSuccess(createdProduct);
       setFormErrors([]);
       onFetchProduct();
       onClose();
