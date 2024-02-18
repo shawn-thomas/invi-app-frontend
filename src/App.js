@@ -1,4 +1,3 @@
-// import './App.css';
 import { BrowserRouter } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { jwtDecode } from "jwt-decode";
@@ -8,14 +7,7 @@ import RoutesList from './RoutesList';
 import useLocalStorage from "./hooks/useLocalStorage";
 import InviApi from './api';
 
-// Key name for storing token in localStorage for "remember me" re-login
-const TOKEN_STORAGE_ID = "invi-token";
-
 /** App
- *
- * State:
- * - user, like { username, firstName, lastName, email}
- * - token
  *
  * App -> RoutesList
  */
@@ -26,21 +18,28 @@ function App() {
     infoLoaded: false,
   });
 
-  const [token, setToken] = useLocalStorage(TOKEN_STORAGE_ID, "");
+  const [token, setToken] = useLocalStorage(process.env.TOKEN_STORAGE_ID, "");
 
-  /** Register a new user and update token */
+  /** Register a new user and update token.
+   *
+   * @param {object} signupData - { username, password, firstname, lastname, email}
+  */
   async function signUp(signupData) {
     let token = await InviApi.register(signupData);
     setToken(token);
   }
 
-  /** Login an existing user and update token */
+  /** Login an existing user and update token
+   *
+   * @param {object} userData - { username, password }
+  */
   async function login(userData) {
     let token = await InviApi.login(userData);
     setToken(token);
   }
 
   /** Logout user, update token to empty string */
+
   function logout() {
     setCurrentUser({
       infoLoaded: true,
@@ -49,6 +48,7 @@ function App() {
     setToken(null);
   }
 
+  /** Fetch user data when component mounts or token change. */
   useEffect(function fetchUserWhenMountedOrTokenChange() {
     async function getCurrentUser() {
       if (token) {
@@ -84,7 +84,6 @@ function App() {
         setCurrentUser
       }}>
         <BrowserRouter>
-
           <RoutesList
             currentUser={currentUser.data}
             signUp={signUp}
