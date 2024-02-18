@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import Alert from '../../../common/Alert';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import HomepageNavbar from '../Homepage/HomepageNavbar';
 import './LoginForm.css';
 
@@ -21,6 +23,7 @@ function LoginForm({ login }) {
   });
 
   const [formErrors, setFormErrors] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   /** Updates the formData state with the input changes. */
   function handleChange(evt) {
@@ -34,18 +37,30 @@ function LoginForm({ login }) {
   /** Handles form submission. */
   async function handleSubmit(evt) {
     evt.preventDefault();
+    setLoading(true);
+
     try {
       await login(formData);
       navigate("/dashboard");
     } catch (err) {
-      console.log(err);
       setFormErrors(err);
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
     <div className='login-page'>
       <HomepageNavbar />
+      <Snackbar
+        open={loading}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <MuiAlert elevation={6} variant="filled" severity="warning">
+          Our backend host will take some time to boot.
+          We apologize for any inconvenience this may cause and appreciate your patience!
+        </MuiAlert>
+      </Snackbar>
       <div className="login-container-wrapper">
         <div className="two-column-layout">
           <div className="intro-text">
@@ -60,16 +75,10 @@ function LoginForm({ login }) {
               <br />
               <b>password:</b> password
             </p>
-            <p>
-              <mark><b>Please note:</b></mark>
-              &nbsp;our backend host will take some time to boot.
-              We apologize for any inconvenience this may cause and appreciate your patience!
-            </p>
           </div>
           <div className="login-container">
             <h2 className="login-heading">Login</h2>
             <form className="login-form" onSubmit={handleSubmit}>
-
               {formErrors.length > 0 && (
                 <Alert messages={formErrors} />
               )}
