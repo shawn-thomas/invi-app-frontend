@@ -46,9 +46,19 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer, onSuccess }) {
     if (!newCustomerData.firstName) {
       errors.firstName = 'First Name is required';
     }
+    if (!newCustomerData.lastName) {
+      errors.lastName = 'Last Name is required';
+    }
     if (!newCustomerData.email) {
       errors.email = 'Email is required';
     }
+    if (!newCustomerData.phone) {
+      errors.phone = 'Phone is required';
+    }
+    if (!newCustomerData.address) {
+      errors.address = 'Address is required';
+    }
+
 
     setValidationErrors(errors);
 
@@ -137,6 +147,8 @@ function AddCustomer({ isOpen, onClose, onFetchCustomer, onSuccess }) {
           onChange={handleInputChange}
           fullWidth
           margin="normal"
+          error={Boolean(validationErrors.firstName)}
+          helperText={validationErrors.firstName}
           required
         />
         <TextField

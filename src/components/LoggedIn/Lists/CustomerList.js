@@ -159,7 +159,7 @@ function CustomerList({ listData, onFetchCustomers }) {
     setSnackbarState({
       open: true,
       message: 'Customer deleted successfully!',
-      severity: 'warning',
+      severity: 'success',
     });
     onFetchCustomers();
     handleModalToggle('isDeleteModalOpen', false);
