@@ -12,6 +12,7 @@ import {
   TableRow,
   TableCell,
   TableContainer,
+  Snackbar,
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import EditInvoiceStatus from '../modals/EditInvoiceStatus';
@@ -163,6 +164,11 @@ function InvoiceList({ listData, onFetchInvoices, onFetchAudit }) {
       onFetchInvoices();
       onFetchAudit();
       setConfirmationModalOpen(false);
+      setSnackbarState({
+        open: true,
+        message: `Invoice #${selectedInvoiceId} was successfully paid!`,
+        severity: 'success',
+      });
     } catch (error) {
       console.log(error);
     }
