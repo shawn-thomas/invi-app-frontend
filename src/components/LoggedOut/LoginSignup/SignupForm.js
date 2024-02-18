@@ -3,7 +3,17 @@ import './SignupForm.css';
 import HomepageNavbar from '../Homepage/HomepageNavbar';
 import { NavLink } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import Alert from '../../../common/Alert';
+
+/**
+ * Component for handling user login.
+ *
+ * @param {function} props.signUp - Function to sign up in the user.
+ *
+ * Homepage -> SignupForm -> Dashboard
+ */
 
 function SignupForm({ signUp }) {
   const navigate = useNavigate();
@@ -16,7 +26,9 @@ function SignupForm({ signUp }) {
   });
 
   const [formErrors, setFormErrors] = useState([]);
+  const [loading, setLoading] = useState(false);
 
+  /** Updates the formData state with the input changes. */
   function handleChange(evt) {
     const { name, value } = evt.target;
     setFormData((prevFormData) => ({
@@ -25,19 +37,32 @@ function SignupForm({ signUp }) {
     }));
   }
 
+  /** Handles form submission. */
   async function handleSubmit(evt) {
     evt.preventDefault();
+    setLoading(true);
     try {
       await signUp(formData);
       navigate("/dashboard");
     } catch (err) {
       setFormErrors(err);
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
     <div className='signup-page'>
       <HomepageNavbar />
+      <Snackbar
+        open={loading}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <MuiAlert elevation={6} variant="filled" severity="warning">
+          Our backend host will take some time to boot.
+          We apologize for any inconvenience this may cause and appreciate your patience!
+        </MuiAlert>
+      </Snackbar>
       <div className="signup-container-wrapper">
         <div className="signup-container">
           <h2 className="signup-heading">Sign Up</h2>
