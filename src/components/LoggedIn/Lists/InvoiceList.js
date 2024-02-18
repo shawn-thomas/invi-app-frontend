@@ -14,6 +14,7 @@ import {
   TableContainer,
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import EditInvoiceStatus from '../modals/EditInvoiceStatus';
 
 import {
   MaterialReactTable,
@@ -43,6 +44,8 @@ function InvoiceList({ listData, onFetchInvoices, onFetchAudit }) {
     severity: 'success',
   });
 
+  const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState(null);
 
   const columns = React.useMemo(
     () => [
@@ -149,12 +152,17 @@ function InvoiceList({ listData, onFetchInvoices, onFetchAudit }) {
 
   /** Update Invoice ----------------------------------------------------------- */
 
-  async function handleMarkAsPaid(rowData) {
+  async function handleMarkAsPaid(invoice) {
+    setSelectedInvoiceId(invoice.invoiceId);
+    setConfirmationModalOpen(true);
+  }
+
+  async function confirmMarkAsPaid() {
     try {
-      const { invoiceId } = rowData;
-      await InviApi.updateInvoiceStatus(invoiceId, { status: 'Paid' });
+      await InviApi.updateInvoiceStatus(selectedInvoiceId, { status: 'Paid' });
       onFetchInvoices();
       onFetchAudit();
+      setConfirmationModalOpen(false);
     } catch (error) {
       console.log(error);
     }
@@ -321,6 +329,12 @@ function InvoiceList({ listData, onFetchInvoices, onFetchAudit }) {
 
       <MaterialReactTable table={table}
       />
+      <EditInvoiceStatus
+        isConfirmationModalOpen={isConfirmationModalOpen}
+        setConfirmationModalOpen={setConfirmationModalOpen}
+        handleMarkAsPaid={confirmMarkAsPaid}
+        invoiceId={selectedInvoiceId}
+      />
     </>
   );
 };
@@ -338,4 +352,3 @@ function InvoiceListWithLocalizationProvider({ listData, onFetchAudit, onFetchIn
 }
 
 export default InvoiceListWithLocalizationProvider;
-
