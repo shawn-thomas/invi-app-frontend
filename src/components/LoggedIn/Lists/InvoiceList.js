@@ -141,13 +141,27 @@ function InvoiceList({ listData, onFetchInvoices, onFetchAudit }) {
 
 
   function handleExportData() {
-    const csv = generateCsv(csvConfig)(listData);
+    const exportedData = listData.map(item => ({
+      invoiceId: item.invoiceId,
+      customerHandle: item.customerHandle,
+      dateCreated: item.dateCreated,
+      totalAmount: item.totalAmount,
+      status: item.status,
+    }));
+    const csv = generateCsv(csvConfig)(exportedData);
     download(csvConfig)(csv);
   };
 
   function handleExportRows(rows) {
     const rowData = rows.map((row) => row.original);
-    const csv = generateCsv(csvConfig)(rowData);
+    const exportedData = rowData.map(item => ({
+      invoiceId: item.invoiceId,
+      customerHandle: item.customerHandle,
+      dataCreated: item.dateCreated,
+      totalAmount: item.totalAmount,
+      status: item.status,
+    }))
+    const csv = generateCsv(csvConfig)(exportedData);
     download(csvConfig)(csv);
   };
 
