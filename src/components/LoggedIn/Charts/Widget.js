@@ -79,7 +79,7 @@ const Widget = ({ type, customersData, inventoryData, invoiceData }) => {
         isMoney: true,
         displayText:  `${totalEarnings.toFixed(2)}`,
         link: "View net revenue",
-        route: "/dashboard/customers/",
+        route: "/dashboard/inventory/",
         icon: (
           <SignalCellularAltOutlinedIcon
             className="widget-icon"
