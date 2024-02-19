@@ -98,7 +98,7 @@ function InvoiceList({ listData, onFetchInvoices, onFetchAudit }) {
               <Box
                 component="span"
                 sx={{
-                  backgroundColor: isInvoicePaid ? '#66bb6a' : '#d3d3d3',
+                  backgroundColor: isInvoicePaid ? '#00C853' : '#FFC107',
                   display: 'inline-block',
                   padding: '4px 8px',
                   borderRadius: '4px',
@@ -160,7 +160,7 @@ function InvoiceList({ listData, onFetchInvoices, onFetchAudit }) {
       dataCreated: item.dateCreated,
       totalAmount: item.totalAmount,
       status: item.status,
-    }))
+    }));
     const csv = generateCsv(csvConfig)(exportedData);
     download(csvConfig)(csv);
   };

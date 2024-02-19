@@ -71,7 +71,7 @@ const AuditList = ({ listData }) => {
             <Box
               component="span"
               sx={{
-                backgroundColor: isInvoicePaid ? '#66bb6a' : '#ff9100',
+                backgroundColor: isInvoicePaid ? '#00C853' : '#FFC107',
                 padding: '4px 8px',
                 borderRadius: '4px',
                 display: 'inline-block',
