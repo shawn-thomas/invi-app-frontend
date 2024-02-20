@@ -65,7 +65,7 @@ const MonthlyEarnings = ({ invoiceData }) => {
   return (
     <div className="chart">
       <div className="chart-title">Monthly Revenue</div>
-      <ResponsiveContainer width="100%" height={600}>
+      <ResponsiveContainer width="100%" height={180}>
         <AreaChart
           width={100}
           data={transformedData}
@@ -99,7 +99,7 @@ const AnnualEarnings = ({ invoiceData }) => {
   return (
     <div className="chart">
       <div className="chart-title">Annual Revenue</div>
-      <ResponsiveContainer width="100%" height={600}>
+      <ResponsiveContainer width="100%" height={180}>
         <AreaChart
           width={800}
           data={transformedDataForYear}
